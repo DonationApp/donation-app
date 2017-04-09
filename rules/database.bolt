@@ -1,0 +1,6 @@
+path / {
+  read() { isSignedIn() }
+  write() { isSignedIn() }
+}
+
+isSignedIn() { auth != null }

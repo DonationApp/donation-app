@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../bower_components/web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/auth/auth-pending.html">
+  </head>
+  <body>
+    <test-fixture id="auth-pending">
+      <template>
+        <auth-pending></auth-pending>
+      </template>
+    </test-fixture>
+    <script>
+      var authPending;
+
+      before(function() {
+        authPending = fixture('auth-pending');
+      });
+
+      describe('auth-pending', function() {
+        it('should display the signing in message', function() {
+          authPending.$.pending.should.be.ok;
+        });
+      });
+    </script>
+  </body>
+</html>

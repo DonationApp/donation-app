@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/sign-in/sign-in-container.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <sign-in-container message="message"></sign-in-container>
+      </template>
+    </test-fixture>
+    <script>
+      var signInContainer;
+
+      describe('sign-in-container', function() {
+        beforeEach(function() {
+          app.helpers.reset();
+          signInContainer = fixture('default attributes');
+        });
+
+        it('should contain a sign-in view', function() {
+          signInContainer.$.view.is.should.eql('sign-in-view');
+        });
+
+        describe('when there is an error', function() {
+          beforeEach(function() {
+            app.auth.hasError.value = true;
+            app.auth.getErrorText.value = 'ERROR';
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the hasError attribute of the view to true', function() {
+            signInContainer.$.view.hasError.should.be.true;
+          });
+
+          it('should set the errorText attribute of the view', function() {
+            signInContainer.$.view.errorText.should.eql('ERROR');
+          });
+        });
+
+        describe('when signed out', function() {
+          beforeEach(function() {
+            app.auth.isSignedOut.value = true;
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the isSignedOut attribute of the view to true', function() {
+            signInContainer.$.view.isSignedOut.should.be.true;
+          });
+        });
+
+        describe('when pending', function() {
+          beforeEach(function() {
+            app.auth.isPending.value = true;
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the isPending attribute of the view to true', function() {
+            signInContainer.$.view.isPending.should.be.true;
+          });
+        });
+
+        describe('when signed in', function() {
+          beforeEach(function() {
+            app.auth.isSignedIn.value = true;
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the isSignedIn attribute of the view to true', function() {
+            signInContainer.$.view.isSignedIn.should.be.true;
+          });
+        });
+
+        describe('on sign-in event', function() {
+          it('should dispatch a signInWithEmailAndPassword action', function() {
+            app.helpers.reset();
+            signInContainer.fire('sign-in', {
+              email: 'email',
+              password: 'password',
+            });
+            app.auth.signInWithEmailAndPassword
+            .should.have.been.calledWith('email', 'password');
+            store.dispatch.should.have.been.calledWith(
+              app.auth.signInWithEmailAndPassword.value
+            );
+          });
+        });
+
+        describe('on sign-in-with-google event', function() {
+          it('should dispatch a signInWithGoogle action', function() {
+            app.helpers.reset();
+            signInContainer.fire('sign-in-with-google');
+            app.auth.signInWithGoogleRedirect
+            .should.have.been.calledOnce;
+            store.dispatch.should.have.been.calledWith(
+              app.auth.signInWithGoogleRedirect.value
+            );
+          });
+        });
+
+        describe('#show', function() {
+          beforeEach(function() {
+            sinon.stub(signInContainer.$.view, 'show');
+            signInContainer.show();
+          });
+
+          afterEach(function() {
+            signInContainer.$.view.show.restore();
+          });
+
+          it('should show the sign-out view', function() {
+            signInContainer.$.view.show.should.have.been.calledOnce;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

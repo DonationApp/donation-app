@@ -1,0 +1,57 @@
+<link rel="import" href="../../src/app.html">
+<script>
+  (function() {
+    sinon.stub(window, 'start');
+    var stubs = [];
+    var listeners = [];
+    var app = window.app;
+    sinon.stub(store, 'dispatch');
+    sinon.stub(store, 'subscribe', function(listener) {
+      listeners.push(listener);
+      return function() {
+        var index = listeners.indexOf(listener);
+        listeners.splice(index, 1);
+      };
+    });
+    app.helpers = {
+      stub: function(path, method, defaultValue) {
+        var methods = app;
+        var label = path.join('.') + '.' + method;
+        while (path.length > 0) {
+          var head = path.shift();
+          methods[head] = methods[head] || {};
+          methods = methods[head]
+        }
+        sinon.stub(methods, method, function() {
+          return methods[method].value;
+        });
+        stubs.push(methods[method]);
+        if (typeof defaultValue === 'undefined') {
+          methods[method].defaultValue = label;
+          methods[method].value = label;
+        } else {
+          methods[method].defaultValue = defaultValue;
+          methods[method].value = defaultValue;
+        }
+        return label;
+      },
+      notifyStateChange: function() {
+        listeners.forEach(function(listener) {
+          listener();
+        });
+      },
+      reset: function() {
+        window.start.reset();
+        store.dispatch.reset();
+        store.subscribe.reset();
+        resetStubs();
+      },
+    };
+    function resetStubs() {
+      stubs.forEach(function(stub) {
+        stub.reset();
+        stub.value = stub.defaultValue;
+      });
+    }
+  })();
+</script>

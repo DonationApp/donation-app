@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/not-found/not-found-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <not-found-view></not-found-view>
+      </template>
+    </test-fixture>
+    <script>
+      var notFoundView;
+
+      describe('not-found-view', function() {
+        beforeEach(function() {
+          notFoundView = fixture('default attributes');
+        });
+
+        it('should instantiate', function() {
+          notFoundView.is.should.eql('not-found-view');
+        });
+      });
+    </script>
+  </body>
+</html>

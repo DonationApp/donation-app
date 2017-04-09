@@ -1,0 +1,39 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="./error-view.html">
+
+<dom-module id="error-container">
+  <template>
+    <error-view
+      id="view"
+      has-error="[[hasError]]"
+      error-text="[[errorText]]"
+    >
+    </error-view>
+  </template>
+  <script>
+    Polymer({
+      is: 'error-container',
+      behaviors: [ReduxBehavior],
+      properties: {
+        hasError: {
+          type: Boolean,
+          statePath: app.error.hasError,
+        },
+        errorText: {
+          type: String,
+          statePath: app.error.getErrorText,
+        },
+      },
+      actions: {
+        reset: app.error.reset,
+      },
+      listeners: {
+        'error-dismissed': '_errorDismissed',
+      },
+      _errorDismissed: function() {
+        this.dispatch('reset');
+      },
+    });
+  </script>
+</dom-module>

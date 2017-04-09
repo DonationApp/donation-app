@@ -1,0 +1,39 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="sign-out-view">
+  <template>
+    <paper-dialog id="dialog">
+      <h3>[[localize('sign-out-message')]]</h3>
+      <div class="buttons">
+        <paper-button id="cancel" dialog-dismiss autofocus>[[localize('cancel-button')]]</paper-button>
+        <paper-button id="signOut" on-tap="_signOut" dialog-confirm>[[localize('sign-out-button')]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'sign-out-view',
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+      ],
+      attached: function() {
+        this.loadResources(this.resolveUrl('../../../locales.json'));
+      },
+      properties: {
+        language: {
+          type: String,
+          value: 'en',
+        },
+      },
+      _signOut: function() {
+        this.fire('sign-out');
+      },
+      show: function() {
+        this.$.dialog.open();
+      },
+    });
+  </script>
+</dom-module>

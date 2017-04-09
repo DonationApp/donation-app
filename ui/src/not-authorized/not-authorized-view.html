@@ -1,0 +1,28 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<dom-module id="not-authorized-view">
+  <template>
+    <div id="message">[[localize(message)]]</div>
+  </template>
+  <script>
+    Polymer({
+      is: 'not-authorized-view',
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+      ],
+      attached: function() {
+        this.loadResources(this.resolveUrl('../../../locales.json'));
+      },
+      properties: {
+        language: {
+          type: String,
+          value: 'en',
+        },
+        message: {
+          type: String,
+        },
+      },
+    });
+  </script>
+</dom-module>

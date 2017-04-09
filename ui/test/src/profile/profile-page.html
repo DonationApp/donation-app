@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/profile/profile-page.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <profile-page></profile-page>
+      </template>
+    </test-fixture>
+    <script>
+      var profilePage;
+
+      describe('profile-page', function() {
+        beforeEach(function() {
+          profilePage = fixture('default attributes');
+        });
+
+        it('should instantiate', function() {
+          profilePage.is.should.eql('profile-page');
+        });
+      });
+    </script>
+  </body>
+</html>

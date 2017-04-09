@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/sign-in/sign-in-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <sign-in-view></sign-in-view>
+      </template>
+    </test-fixture>
+    <script>
+      var signInView;
+
+      describe('sign-in-view', function() {
+        beforeEach(function(done) {
+          signInView = fixture('default attributes');
+          const stringsLoaded = function() {
+            signInView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            done();
+          };
+          signInView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+        });
+
+        it('should instantiate', function() {
+          signInView.is.should.eql('sign-in-view');
+        });
+
+        it('should have a cancel button', function() {
+          signInView.$.cancel.textContent.should.eql(signInView.localize('cancel-button'));
+        });
+
+        describe('when there is an error', function() {
+          beforeEach(function() {
+            signInView.hasError = true;
+            signInView.errorText = 'ERROR';
+          });
+
+          it('should display the error text', function() {
+            signInView.$.error.hidden.should.be.false;
+            signInView.$.error.textContent.should.eql('ERROR');
+          });
+        });
+
+        describe('when pending', function() {
+          beforeEach(function() {
+            signInView.isPending = true;
+          });
+
+          it('should disable the email field', function() {
+            signInView.$.email.disabled.should.be.true;
+          });
+
+          it('should disable the password field', function() {
+            signInView.$.password.disabled.should.be.true;
+          });
+
+          it('should change the cancel button to dismiss', function() {
+            signInView.$.cancel.textContent.should.eql(signInView.localize('dismiss-button'));
+          });
+
+          it('should disable the sign in button', function() {
+            signInView.$.signIn.disabled.should.be.true;
+          });
+
+          it('should disable the sign in with google button', function() {
+            signInView.$.signInWithGoogle.disabled.should.be.true;
+          });
+        });
+
+        describe('when the sign in button is clicked', function() {
+          it('should fire a sign-in event', function(done) {
+            signInView.$.email.value = 'email';
+            signInView.$.password.value = 'password';
+            signInView.addEventListener('sign-in', function(event) {
+              event.detail.should.eql({
+                email: 'email',
+                password: 'password',
+              });
+              done();
+            });
+            signInView.$.signIn.click();
+          });
+        });
+
+        describe('when the sign in with google button is clicked', function() {
+          it('should fire a sign-in-with-gooogle event', function(done) {
+            signInView.$.email.value = 'email';
+            signInView.$.password.value = 'password';
+            signInView.addEventListener('sign-in-with-google', function() {
+              done();
+            });
+            signInView.$.signInWithGoogle.click();
+          });
+        });
+
+        describe('#show', function() {
+          beforeEach(function() {
+            signInView.show();
+          });
+
+          it('should open the dialog', function() {
+            signInView.$.dialog.opened.should.be.true;
+          });
+
+          describe('and then become signed in', function() {
+            beforeEach(function() {
+              signInView.isSignedIn = true;
+            });
+
+            it('should close the dialog', function() {
+              signInView.$.dialog.opened.should.be.close;
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

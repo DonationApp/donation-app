@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/sign-out/sign-out-container.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <sign-out-container></sign-out-container>
+      </template>
+    </test-fixture>
+    <script>
+      var signOutContainer;
+
+      describe('sign-out-container', function() {
+        beforeEach(function() {
+          app.helpers.reset();
+          signOutContainer = fixture('default attributes');
+        });
+
+        it('should contain a sign-out view', function() {
+          signOutContainer.$.view.is.should.eql('sign-out-view');
+        });
+
+        describe('on sign-out event', function() {
+          it('should dispatch a signOut action', function() {
+            app.helpers.reset();
+            signOutContainer.fire('sign-out');
+            app.auth.signOut.should.have.been.calledOnce;
+            store.dispatch.should.have.been.calledWith(
+              app.auth.signOut.value
+            );
+          });
+        });
+
+        describe('#show', function() {
+          beforeEach(function() {
+            sinon.stub(signOutContainer.$.view, 'show');
+            signOutContainer.show();
+          });
+
+          afterEach(function() {
+            signOutContainer.$.view.show.restore();
+          });
+
+          it('should show the sign-out view', function() {
+            signOutContainer.$.view.show.should.have.been.calledOnce;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

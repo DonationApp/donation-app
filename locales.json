@@ -1,0 +1,18 @@
+{
+  "en": {
+    "main-title": "Donation Manager",
+    "donate-page-title": "Donate",
+    "profile-page-title": "Profile",
+    "recurring-page-title": "Recurring",
+    "not-found-page-title": "Not Found",
+    "error-dialog-title": "Error",
+    "profile-not-authorized-message": "You need to sign in in order to view your profile",
+    "dismiss-button": "Dismiss",
+    "cancel-button": "Cancel",
+    "sign-in-message": "Enter your email and password to sign in.",
+    "sign-out-message": "Are you sure you wish to sign out?",
+    "sign-out-button": "Sign Out",
+    "sign-in-button": "Sign In",
+    "sign-in-with-google-button": "Sign In With Google"
+  }
+}

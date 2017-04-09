@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/recurring/recurring-container.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <recurring-container></recurring-container>
+      </template>
+    </test-fixture>
+    <script>
+      var recurringContainer;
+
+      describe('recurring-container', function() {
+        beforeEach(function() {
+          app.helpers.reset();
+          recurringContainer = fixture('default attributes');
+        });
+
+        it('should contain a recurring view', function() {
+          recurringContainer.$.view.is.should.eql('recurring-view');
+        });
+
+        describe('when signed in', function() {
+          beforeEach(function() {
+            app.auth.isSignedIn.value = true;
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the isSignedIn attribute of the view to true', function() {
+            recurringContainer.$.view.isSignedIn.should.be.true;
+          });
+        });
+
+        describe('when not signed in', function() {
+          beforeEach(function() {
+            app.auth.isSignedIn.value = false;
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the isSignedIn attribute of the view to false', function() {
+            recurringContainer.$.view.isSignedIn.should.be.false;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

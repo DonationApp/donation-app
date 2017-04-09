@@ -1,0 +1,34 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="./sign-out-view.html">
+
+<dom-module id="sign-out-container">
+  <template>
+    <sign-out-view
+      id="view"
+    >
+    </sign-out-view>
+  </template>
+  <script>
+    Polymer({
+      is: 'sign-out-container',
+      behaviors: [ReduxBehavior],
+      properties: {
+      },
+      listeners: {
+        'sign-out': '_signOut',
+      },
+      actions: {
+        signOut: app.auth.signOut,
+      },
+      _signOut: function() {
+        return this.dispatch(
+          'signOut'
+        );
+      },
+      show: function() {
+        this.$.view.show();
+      },
+    });
+  </script>
+</dom-module>

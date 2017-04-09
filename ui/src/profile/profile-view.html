@@ -1,0 +1,31 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../not-authorized/not-authorized-view.html">
+<link rel="import" href="./profile-page.html">
+
+<dom-module id="profile-view">
+  <template>
+    <iron-pages
+      id="pages"
+      selected="[[_getPage(isSignedIn)]]"
+      attr-for-selected="name"
+    >
+      <not-authorized-view message="profile-not-authorized-message" name="not-authorized"></not-authorized-view>
+      <profile-page name="profile"></profile-page>
+    </iron-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'profile-view',
+      properties: {
+        isSignedIn: {
+          type: Boolean,
+          value: false,
+        },
+      },
+      _getPage: function(isSignedIn) {
+        return isSignedIn ? 'profile' : 'not-authorized';
+      },
+    });
+  </script>
+</dom-module>

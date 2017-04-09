@@ -1,0 +1,27 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="./recurring-view.html">
+
+<dom-module id="recurring-container">
+  <template>
+    <recurring-view
+      id="view"
+      is-signed-in="[[isSignedIn]]"
+    >
+    </recurring-view>
+  </template>
+  <script>
+    Polymer({
+      is: 'recurring-container',
+      behaviors: [ReduxBehavior],
+      properties: {
+        isSignedIn: {
+          type: Boolean,
+          statePath: app.auth.isSignedIn,
+        },
+      },
+      actions: {
+      },
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/error/error-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <error-view></error-view>
+      </template>
+    </test-fixture>
+    <script>
+      var errorView;
+
+      describe('error-view', function() {
+        beforeEach(function() {
+          errorView = fixture('default attributes');
+          const stringsLoaded = function() {
+            errorView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            done();
+          };
+          errorView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+        });
+
+        it('should instantiate', function() {
+          errorView.is.should.eql('error-view');
+        });
+
+        describe('when there is an error', function() {
+          beforeEach(function() {
+            errorView.hasError = true;
+            errorView.errorText = 'ERROR';
+          });
+
+          it('should open the error dialog', function() {
+            errorView.$.dialog.opened.should.be.true;
+          });
+
+          it('should set the error text', function() {
+            errorView.$.message.textContent.should.eql('ERROR');
+          });
+
+          describe('when the dialog is closed', function() {
+            it('should fire an error-dismissed event', function(done) {
+              errorView.addEventListener('error-dismissed', function() {
+                done();
+              });
+              errorView.$.dialog.close();
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

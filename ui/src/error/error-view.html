@@ -1,0 +1,50 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="error-view">
+  <template>
+    <paper-dialog id="dialog" on-iron-overlay-closed="_closed">
+      <h3>[[localize('error-dialog-title')]]</h3>
+      <div id="message">[[errorText]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[localize('dismiss-button')]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'error-view',
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+      ],
+      attached: function() {
+        this.loadResources(this.resolveUrl('../../../locales.json'));
+      },
+      properties: {
+        language: {
+          type: String,
+          value: 'en',
+        },
+        hasError: {
+          type: Boolean,
+          value: false,
+          observer: '_hasErrorChange',
+        },
+        errorText: {
+          type: String,
+          value: false,
+        },
+      },
+      _hasErrorChange: function(hasError) {
+        if (hasError) {
+          this.$.dialog.open();
+        }
+      },
+      _closed: function() {
+        this.fire('error-dismissed');
+      },
+    });
+  </script>
+</dom-module>

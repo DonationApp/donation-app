@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/sign-out/sign-out-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <sign-out-view message="profile-sign-out-message"></sign-out-view>
+      </template>
+    </test-fixture>
+    <script>
+      var signOutView;
+
+      describe('sign-out-view', function() {
+        beforeEach(function(done) {
+          signOutView = fixture('default attributes');
+          const stringsLoaded = function() {
+            signOutView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            done();
+          };
+          signOutView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+        });
+
+        it('should instantiate', function() {
+          signOutView.is.should.eql('sign-out-view');
+        });
+
+        it('should initially be closed', function() {
+          signOutView.$.dialog.opened.should.be.false;
+        });
+
+        describe('when the sign out button is clicked', function() {
+          it('should fire a sign-out event', function(done) {
+            signOutView.addEventListener('sign-out', function() {
+              done();
+            });
+            signOutView.$.signOut.click();
+          });
+        });
+
+        describe('#show', function() {
+          beforeEach(function() {
+            signOutView.show();
+          });
+
+          it('should open the dialog', function() {
+            signOutView.$.dialog.opened.should.be.true;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

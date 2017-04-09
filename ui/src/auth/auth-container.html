@@ -1,0 +1,93 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="./auth-error.html">
+<link rel="import" href="./auth-pending.html">
+<link rel="import" href="./auth-sign-in.html">
+<link rel="import" href="./auth-sign-out.html">
+
+<dom-module id="auth-container">
+  <template>
+    <auth-error
+      hidden$="[[!hasError]]"
+      id="error"
+      message="[[errorText]]"
+    >
+    </auth-error>
+    <auth-pending
+      hidden$="[[!isPending]]"
+      id="pending"
+    >
+    </auth-pending>
+    <auth-sign-out
+      hidden$="[[!isSignedIn]]"
+      id="signOut"
+      name="[[displayName]]"
+      on-sign-out="_signOut"
+    >
+    </auth-sign-out>
+    <auth-sign-in
+      hidden$="[[!isSignedOut]]"
+      id="signIn"
+      email="[[email]]"
+      on-sign-in="_signIn"
+      on-sign-in-with-google="_signInWithGoogle"
+    >
+    </auth-sign-in>
+  </template>
+  <script>
+    Polymer({
+      is: 'auth-container',
+      behaviors: [ReduxBehavior],
+      properties: {
+        hasError: {
+          type: Boolean,
+          statePath: app.auth.hasError,
+        },
+        errorText: {
+          type: String,
+          statePath: app.auth.getErrorText,
+        },
+        isPending: {
+          type: Boolean,
+          statePath: app.auth.isPending,
+        },
+        isSignedIn: {
+          type: Boolean,
+          statePath: app.auth.isSignedIn,
+        },
+        displayName: {
+          type: String,
+          statePath: app.auth.getDisplayName,
+        },
+        isSignedOut: {
+          type: Boolean,
+          statePath: app.auth.isSignedOut,
+        },
+        email: {
+          type: String,
+          statePath: app.auth.getSubmittedEmail,
+        }
+      },
+      actions: {
+        signInWithGoogle: app.auth.signInWithGoogle,
+        signInWithEmailAndPassword: app.auth.signInWithEmailAndPassword,
+        signOut: app.auth.signOut,
+      },
+      _signInWithGoogle: function() {
+        return this.dispatch(
+          'signInWithGoogle'
+        );
+      },
+      _signIn: function(event) {
+        return this.dispatch(
+          'signInWithEmailAndPassword',
+          event.detail.email,
+          event.detail.password
+        );
+      },
+      _signOut: function() {
+        return this.dispatch('signOut');
+      },
+    });
+  </script>
+</dom-module>

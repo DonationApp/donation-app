@@ -1,0 +1,176 @@
+<link rel="import" href="./intl.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="./redux-behavior.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="./error/error-container.html">
+<link rel="import" href="./not-found/not-found-view.html">
+<link rel="import" href="./donate/donate-container.html">
+<link rel="import" href="./profile/profile-container.html">
+<link rel="import" href="./recurring/recurring-container.html">
+<link rel="import" href="./sign-out/sign-out-container.html">
+<link rel="import" href="./sign-in/sign-in-container.html">
+
+<dom-module id="ui-root">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+
+        display: block;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+    </style>
+
+    <app-location id="location" route="{{route}}"></app-location>
+    <app-route
+      id="route"
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subRoute}}"
+    ></app-route>
+    <error-container id="error"></error-container>
+    <sign-out-container id="signOutContainer"></sign-out-container>
+    <sign-in-container id="signInContainer"></sign-in-container>
+    <app-drawer-layout id="drawerLayout" fullbleed>
+      <app-drawer id="drawer">
+        <app-toolbar id="drawerToolbar">
+          <div id="mainTitle" main-title>[[localize('main-title')]]</div>
+          <iron-icon id="pagePointer" icon="chevron-right"></iron-icon>
+        </app-toolbar>
+        <iron-selector
+          id="selector"
+          selected="[[page]]"
+          attr-for-selected="name"
+          class="drawer-list"
+          role="navigation"
+        >
+          <a name="donate" href="/donate">[[localize('donate-page-title')]]</a>
+          <a name="profile" href="/profile">[[localize('profile-page-title')]]</a>
+          <a name="recurring" href="/recurring">[[localize('recurring-page-title')]]</a>
+        </iron-selector>
+      </app-drawer>
+      <app-header-layout id="headerLayout" has-scrolling-region>
+        <app-header id="header" fixed effects="waterfall">
+          <app-toolbar id="toolbar">
+            <paper-icon-button id="toggleDrawer" icon="menu" drawer-toggle></paper-icon-button>
+            <div id="pageTitle" main-title>[[_getPageTitle(localize, page)]]</div>
+            <template is="dom-if" if="[[isSignedOut]]">
+              <paper-icon-button id="signIn" icon="social:person-outline" on-tap="_signIn"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="[[isSignedIn]]">
+              <paper-icon-button id="signOut" icon="social:person" on-tap="_signOut"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="[[isPending]]">
+              <!-- using a button here because if we just use an iron-icon it will not be aligned with the other buttons -->
+              <paper-icon-button id="pending" icon="social:person-outline"></paper-icon-button>
+            </template>
+          </app-toolbar>
+        </app-header>
+        <iron-pages
+          id="pages"
+          selected="[[page]]"
+          attr-for-selected="name"
+          fallback-selection="not-found"
+        >
+          <donate-container name="donate"></donate-container>
+          <profile-container name="profile"></profile-container>
+          <recurring-container name="recurring"></recurring-container>
+          <not-found-view name="not-found"></not-found-view>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'ui-root',
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        ReduxBehavior,
+      ],
+      properties: {
+        language: {
+          type: String,
+          value: 'en',
+        },
+        isSignedOut: {
+          type: Boolean,
+          statePath: app.auth.isSignedOut,
+        },
+        isSignedIn: {
+          type: Boolean,
+          statePath: app.auth.isSignedIn,
+        },
+        isPending: {
+          type: Boolean,
+          statePath: app.auth.isPending,
+        },
+        page: {
+          type: String,
+          reflectToAttribute: true,
+        },
+      },
+      observers: [
+        '_routePageChange(routeData.page)',
+      ],
+      attached: function() {
+        this.loadResources(this.resolveUrl('../../locales.json'));
+      },
+      _getPageTitle: function(localize, page) {
+        return localize(page + '-page-title') || localize('not-found-page-title');
+      },
+      _routePageChange: function(page) {
+        this.page = page || 'donate';
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      },
+      _signIn: function() {
+        this.$.signInContainer.show();
+      },
+      _signOut: function() {
+        this.$.signOutContainer.show();
+      },
+    });
+  </script>
+</dom-module>

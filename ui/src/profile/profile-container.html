@@ -1,0 +1,27 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="./profile-view.html">
+
+<dom-module id="profile-container">
+  <template>
+    <profile-view
+      id="view"
+      is-signed-in="[[isSignedIn]]"
+    >
+    </profile-view>
+  </template>
+  <script>
+    Polymer({
+      is: 'profile-container',
+      behaviors: [ReduxBehavior],
+      properties: {
+        isSignedIn: {
+          type: Boolean,
+          statePath: app.auth.isSignedIn,
+        },
+      },
+      actions: {
+      },
+    });
+  </script>
+</dom-module>

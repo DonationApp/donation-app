@@ -1,0 +1,15 @@
+{
+  "entrypoint": "index.html",
+  "shell": "ui/src/ui-root.html",
+  "fragments": [
+  ],
+  "sources": [
+   "ui/images/**/*",
+   "bower.json"
+  ],
+  "includeDependencies": [
+    "locales.json",
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
+}

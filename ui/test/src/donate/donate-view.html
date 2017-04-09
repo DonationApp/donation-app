@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/donate/donate-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <donate-view></donate-view>
+      </template>
+    </test-fixture>
+    <script>
+      var donateView;
+
+      describe('donate-view', function() {
+        beforeEach(function() {
+          donateView = fixture('default attributes');
+        });
+
+        it('should instantiate', function() {
+          donateView.is.should.eql('donate-view');
+        });
+      });
+    </script>
+  </body>
+</html>

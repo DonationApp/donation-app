@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/profile/profile-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <profile-view></profile-view>
+      </template>
+    </test-fixture>
+    <script>
+      var profileView;
+
+      describe('profile-view', function() {
+        beforeEach(function() {
+          profileView = fixture('default attributes');
+        });
+
+        it('should instantiate', function() {
+          profileView.is.should.eql('profile-view');
+        });
+
+        describe('when not signed in', function() {
+          beforeEach(function(done) {
+            profileView.isSignedIn = false;
+            flush(done);
+          });
+
+          it('should set the not authorized in page', function() {
+            profileView.$.pages.selected.should.eql('not-authorized');
+          });
+
+          it('the not authorized page should be the correct type', function() {
+            profileView.$.pages.selectedItem.is.should.eql('not-authorized-view');
+          });
+
+          it('should set the correct not authorized message', function() {
+            profileView.$.pages.selectedItem.message.should.eql('profile-not-authorized-message');
+          });
+        });
+
+        describe('when signed in', function() {
+          beforeEach(function(done) {
+            profileView.isSignedIn = true;
+            flush(done);
+          });
+
+          it('should set the profile page', function() {
+            profileView.$.pages.selected.should.eql('profile');
+          });
+
+          it('the profile page should be the correct type', function() {
+            profileView.$.pages.selectedItem.is.should.eql('profile-page');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="sign-in-view">
+  <template>
+    <paper-dialog id="dialog">
+      <h3 id="message">[[localize('sign-in-message')]]</h3>
+      <div id="error" hidden$="[[!hasError]]">[[errorText]]</div>
+      <paper-input id="email" label="Email" disabled$="[[isPending]]"></paper-input>
+      <paper-input id="password" label="Password" type="password" disabled$="[[isPending]]"></paper-input>
+      <div class="buttons">
+        <paper-button id="cancel" dialog-dismiss>[[_getCancelButtonText(localize, isPending)]]</paper-button>
+        <paper-button id="signIn" on-tap="_signIn" disabled$="[[isPending]]">[[localize('sign-in-button')]]</paper-button>
+        <paper-button id="signInWithGoogle" on-tap="_signInWithGoogle" disabled$="[[isPending]]" autofocus>[[localize('sign-in-with-google-button')]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'sign-in-view',
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+      ],
+      attached: function() {
+        this.loadResources(this.resolveUrl('../../../locales.json'));
+      },
+      properties: {
+        language: {
+          type: String,
+          value: 'en',
+        },
+        hasError: {
+          type: Boolean,
+          value: false,
+        },
+        errorText: {
+          type: String,
+          value: '',
+        },
+        isSignedIn: {
+          type: Boolean,
+          value: false,
+          observer: '_isSignedInChange',
+        },
+        isSignedOut: {
+          type: Boolean,
+          value: true,
+        },
+        isPending: {
+          type: Boolean,
+          value: false,
+        },
+      },
+      _getCancelButtonText: function(localize, isPending) {
+        return isPending ? localize('dismiss-button') : localize('cancel-button');
+      },
+      _signIn: function() {
+        var email = this.$.email.value;
+        var password = this.$.password.value;
+        this.fire('sign-in', {
+          email: email,
+          password: password,
+        });
+      },
+      _signInWithGoogle: function() {
+        this.fire('sign-in-with-google');
+      },
+      _isSignedInChange: function(isSignedIn) {
+        if (isSignedIn) {
+          this.$.dialog.close();
+        }
+      },
+      show: function() {
+        this.$.dialog.open();
+      },
+    });
+  </script>
+</dom-module>

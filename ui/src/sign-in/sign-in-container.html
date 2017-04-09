@@ -1,0 +1,72 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="./sign-in-view.html">
+
+<dom-module id="sign-in-container">
+  <template>
+    <sign-in-view
+      id="view"
+      has-error="[[hasError]]"
+      error-text="[[errorText]]"
+      is-signed-in="[[isSignedIn]]"
+      is-signed-out="[[isSignedOut]]"
+      is-pending="[[isPending]]"
+    >
+    </sign-in-view>
+  </template>
+  <script>
+    Polymer({
+      is: 'sign-in-container',
+      behaviors: [ReduxBehavior],
+      properties: {
+        message: {
+          type: String,
+          value: '',
+        },
+        hasError: {
+          type: Boolean,
+          statePath: app.auth.hasError,
+        },
+        errorText: {
+          type: String,
+          statePath: app.auth.getErrorText,
+        },
+        isSignedIn: {
+          type: Boolean,
+          statePath: app.auth.isSignedIn,
+        },
+        isSignedOut: {
+          type: Boolean,
+          statePath: app.auth.isSignedOut,
+        },
+        isPending: {
+          type: Boolean,
+          statePath: app.auth.isPending,
+        },
+      },
+      listeners: {
+        'sign-in': '_signIn',
+        'sign-in-with-google': '_signInWithGoogle',
+      },
+      actions: {
+        signInWithGoogleRedirect: app.auth.signInWithGoogleRedirect,
+        signInWithEmailAndPassword: app.auth.signInWithEmailAndPassword,
+      },
+      _signInWithGoogle: function() {
+        return this.dispatch(
+          'signInWithGoogleRedirect'
+        );
+      },
+      _signIn: function(event) {
+        return this.dispatch(
+          'signInWithEmailAndPassword',
+          event.detail.email,
+          event.detail.password
+        );
+      },
+      show: function() {
+        this.$.view.show();
+      },
+    });
+  </script>
+</dom-module>

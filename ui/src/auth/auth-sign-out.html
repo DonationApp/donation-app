@@ -1,0 +1,20 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="auth-sign-out">
+  <template>
+    <div id="name">[[name]]</div>
+    <paper-button id="signOut" on-tap="_signOut">Sign Out</paper-button>
+  </template>
+  <script>
+    Polymer({
+      is: 'auth-sign-out',
+      properties: {
+        name: String,
+      },
+      _signOut: function() {
+        this.fire('sign-out');
+      },
+    });
+  </script>
+</dom-module>

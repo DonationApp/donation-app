@@ -1,0 +1,9 @@
+/.alarmist/
+/.firebaserc
+/build/
+/.nyc_output/
+/npm-debug.log*
+/node_modules/
+/bower_components/
+.DS_Store
+_*

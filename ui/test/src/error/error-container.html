@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/error/error-container.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <error-container></error-container>
+      </template>
+    </test-fixture>
+    <script>
+      var errorContainer;
+
+      describe('error-container', function() {
+        beforeEach(function() {
+          app.helpers.reset();
+          errorContainer = fixture('default attributes');
+        });
+
+        it('should contain a error view', function() {
+          errorContainer.$.view.is.should.eql('error-view');
+        });
+
+        describe('when there is an error', function() {
+          beforeEach(function() {
+            app.error.hasError.value = true;
+            app.error.getErrorText.value = 'ERROR';
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the hasError attribute of the view to true', function() {
+            errorContainer.$.view.hasError.should.be.true;
+          });
+
+          it('should set the errorText attribute of the view', function() {
+            errorContainer.$.view.errorText.should.eql('ERROR');
+          });
+        });
+
+        describe('when there is no error', function() {
+          beforeEach(function() {
+            app.error.hasError.value = false;
+            app.error.getErrorText.value = '';
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the hasError attribute of the view to false', function() {
+            errorContainer.$.view.hasError.should.be.false;
+          });
+
+          it('should set the errorText attribute of the view', function() {
+            errorContainer.$.view.errorText.should.eql('');
+          });
+        });
+
+        describe('when an error-dismissed event is received', function() {
+          it('should dispatch a reset action', function() {
+            app.helpers.reset();
+            errorContainer.fire('error-dismissed');
+            app.error.reset.should.have.been.calledOnce;
+            store.dispatch.should.have.been.calledWith(
+              app.error.reset.value
+            );
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

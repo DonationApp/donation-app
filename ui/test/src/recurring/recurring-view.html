@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/recurring/recurring-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <recurring-view></recurring-view>
+      </template>
+    </test-fixture>
+    <script>
+      var recurringView;
+
+      describe('recurring-view', function() {
+        beforeEach(function() {
+          recurringView = fixture('default attributes');
+        });
+
+        it('should instantiate', function() {
+          recurringView.is.should.eql('recurring-view');
+        });
+      });
+    </script>
+  </body>
+</html>

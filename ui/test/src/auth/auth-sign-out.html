@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../bower_components/web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/auth/auth-sign-out.html">
+  </head>
+  <body>
+    <test-fixture id="auth-sign-out">
+      <template>
+        <auth-sign-out name='Fred Bloggs'></auth-sign-out>
+      </template>
+    </test-fixture>
+    <script>
+      var authSignOut;
+
+      before(function() {
+        authSignOut = fixture('auth-sign-out');
+      });
+
+      describe('auth-sign-out', function() {
+        it('should display the name', function() {
+          authSignOut.$.name.textContent.should.eql('Fred Bloggs');
+        });
+
+        it('should display the sign out button', function() {
+          authSignOut.$.signOut.should.be.ok;
+        });
+
+        describe('when the sign out button is clicked', function() {
+          it('should fire a sign-out event', function(done) {
+            authSignOut.addEventListener('sign-out', function(event) {
+              done();
+            });
+            authSignOut.$.signOut.click();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
