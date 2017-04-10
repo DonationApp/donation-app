@@ -70,11 +70,11 @@ export const getSubmittedEmail = createSelector(
 //
 // Private actions
 //
-const submitSignIn = duck.action('SUBMIT_SIGN_IN');
 
 //
 // Public actions
 //
+export const submitSignIn = duck.action('SUBMIT_SIGN_IN');
 export const reset = duck.action('RESET');
 export const setUser = duck.action('SET_USER');
 

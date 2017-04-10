@@ -3,6 +3,7 @@ import config from '../config';
 
 class Service {
   static start(app, store) {
+    store.dispatch(app.auth.submitSignIn()),
     firebase.initializeApp(config);
     firebase.auth().onAuthStateChanged(
       (user) => store.dispatch(app.auth.setUser(user)),

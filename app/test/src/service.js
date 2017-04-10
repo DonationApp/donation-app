@@ -11,6 +11,7 @@ const email = 'fred@bloggs.com';
 const password = 'my password';
 const setUserAction = 'set user action';
 const setErrorAction = 'set error action';
+const submitSignInAction = 'submit sign in action';
 const error = new Error('FAIL');
 
 const auth = firebase.auth();
@@ -22,6 +23,7 @@ const store = {
 const app = {
   auth: {
     setUser: sinon.spy(() => setUserAction),
+    submitSignIn: sinon.spy(() => submitSignInAction),
   },
   error: {
     setError: sinon.spy(() => setErrorAction),
@@ -39,9 +41,13 @@ describe('service', () => {
     return service.start(app, store);
   });
 
+  it('should dispatch a submit sign in action while we wait', () => {
+    app.auth.submitSignIn.should.have.been.calledOnce;
+    store.dispatch.should.have.been.calledWith(submitSignInAction);
+  });
+
   it('should dispatch the error if the redirect result has an error', () => {
     app.error.setError.should.have.been.calledWith(error);
-    store.dispatch.should.have.been.calledOnce;
     store.dispatch.should.have.been.calledWith(setErrorAction);
   });
 

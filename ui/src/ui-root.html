@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
@@ -58,6 +59,10 @@
         color: black;
         font-weight: bold;
       }
+
+      paper-spinner-lite.white {
+        --paper-spinner-color: white;
+      }
     </style>
 
     <app-location id="location" route="{{route}}"></app-location>
@@ -101,8 +106,7 @@
               <paper-icon-button id="signOut" icon="social:person" on-tap="_signOut"></paper-icon-button>
             </template>
             <template is="dom-if" if="[[isPending]]">
-              <!-- using a button here because if we just use an iron-icon it will not be aligned with the other buttons -->
-              <paper-icon-button id="pending" icon="social:person-outline"></paper-icon-button>
+              <paper-spinner-lite id="pending" class="white" active></paper-spinner-lite>
             </template>
           </app-toolbar>
         </app-header>
