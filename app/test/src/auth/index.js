@@ -34,16 +34,20 @@ async function reset({actions, serviceResults}) {
   states = [];
 }
 
+const emailVerified = true;
 const email = 'fred@bloggs.com';
 const password = 'my password';
 const displayName = 'Fred Bloggs';
 const error = new Error('failed sign in');
 const user = {
-  displayName: displayName,
-  email: email,
+  displayName,
+  email,
+  emailVerified,
+  sendEmailVerification: sinon.spy(),
 };
-const userWithoutDisplayName = {
-  email: email,
+const userWithoutDisplayNameOrEmailVerified = {
+  email,
+  sendEmailVerification: sinon.spy(),
 };
 
 describe('auth', () => {
@@ -69,6 +73,14 @@ describe('auth', () => {
 
     it('should not be pending', () => {
       auth.isPending(states[0]).should.be.false;
+    });
+
+    it('should not have a verified email', () => {
+      auth.isEmailVerified(states[0]).should.eql(false);
+    });
+
+    it('should not be signed in', () => {
+      auth.isSignedIn(states[0]).should.eql(false);
     });
 
     it('should not be signed in', () => {
@@ -111,6 +123,7 @@ describe('auth', () => {
           checkAuthCall: () => {
             service.signInWithGoogle.should.have.been.calledOnce;
           },
+          shouldVerifyEmail: false,
         },
         'with email and password': {
           action: auth.signInWithEmailAndPassword(email, password),
@@ -122,6 +135,7 @@ describe('auth', () => {
               password,
             );
           },
+          shouldVerifyEmail: false,
         },
         'creating a user with email and password': {
           action: auth.createUserWithEmailAndPassword(email, password),
@@ -133,6 +147,7 @@ describe('auth', () => {
               password,
             );
           },
+          shouldVerifyEmail: true,
         },
       }, (signInCase, description) => {
         describe(description, () => {
@@ -141,10 +156,12 @@ describe('auth', () => {
               serviceResults: [{
                 error: error,
               }],
+              shouldVerifyEmail: false,
               states: [{
                 error: false,
                 errorText: '',
                 pending: true,
+                emailVerified: false,
                 signedIn: false,
                 signedOut: false,
                 displayName: '',
@@ -153,6 +170,7 @@ describe('auth', () => {
                 error: true,
                 errorText: error.toString(),
                 pending: false,
+                emailVerified: false,
                 signedIn: false,
                 signedOut: true,
                 displayName: '',
@@ -163,10 +181,12 @@ describe('auth', () => {
               serviceResults: [{
                 success: user,
               }],
+              shouldVerifyEmail: signInCase.shouldVerifyEmail,
               states: [{
                 error: false,
                 errorText: '',
                 pending: true,
+                emailVerified: false,
                 signedIn: false,
                 signedOut: false,
                 displayName: '',
@@ -175,6 +195,7 @@ describe('auth', () => {
                 error: false,
                 errorText: '',
                 pending: false,
+                emailVerified: true,
                 signedIn: true,
                 signedOut: false,
                 displayName,
@@ -189,6 +210,12 @@ describe('auth', () => {
                   serviceResults: resultCase.serviceResults,
                 });
                 await store.dispatch(signInCase.action);
+              });
+
+              it('should verify email if necessary', () => {
+                if (resultCase.shouldVerifyEmail) {
+                  user.sendEmailVerification.should.have.been.calledOnce;
+                }
               });
 
               it('should sign in with the correct method', () => {
@@ -225,7 +252,13 @@ describe('auth', () => {
                     auth.isPending(state).should.eql(testState.pending);
                   });
 
-                  it('shaould have the correct signed in state', () => {
+                  it('should have the correct email verified state', () => {
+                    auth.isEmailVerified(state).should.eql(
+                      testState.emailVerified
+                    );
+                  });
+
+                  it('should have the correct signed in state', () => {
                     auth.isSignedIn(state).should.eql(testState.signedIn);
                   });
 
@@ -269,13 +302,15 @@ describe('auth', () => {
 
               describe('then set user', () => {
                 _.forEach({
-                  'with a displayName': {
+                  'with a displayName and email verified': {
                     user,
                     displayName,
+                    emailVerified,
                   },
-                  'with no displayName': {
-                    user: userWithoutDisplayName,
+                  'with no displayName and email not verified': {
+                    user: userWithoutDisplayNameOrEmailVerified,
                     displayName: email,
+                    emailVerified: false,
                   },
                 }, (value, key) => {
                   describe(key, () => {
@@ -303,6 +338,12 @@ describe('auth', () => {
 
                     it('should not be pending', () => {
                       auth.isPending(states[0]).should.be.false;
+                    });
+
+                    it('should have the correct email verified state', () => {
+                      auth.isEmailVerified(states[0]).should.eql(
+                        value.emailVerified
+                      );
                     });
 
                     it('should be signed in', () => {

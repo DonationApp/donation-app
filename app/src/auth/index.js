@@ -18,10 +18,6 @@ const duck = new Duck(
 // Selectors
 //
 
-// display name helper
-const displayName =
-  (user) => isUndefined(user.displayName) ? user.email : user.displayName;
-
 // private selectors
 const error = duck.selector((state) => state.error);
 const pending = duck.selector((state) => state.pending);
@@ -53,7 +49,13 @@ export const isSignedIn = createSelector(
 export const getDisplayName = createSelector(
   isSignedIn,
   user,
-  (isSignedIn, user) => isSignedIn ? displayName(user) : '',
+  (isSignedIn, user) => isSignedIn ? user.displayName : '',
+);
+
+export const isEmailVerified = createSelector(
+  isSignedIn,
+  user,
+  (isSignedIn, user) => isSignedIn ? user.emailVerified : false,
 );
 
 export const isSignedOut = createSelector(
@@ -97,6 +99,10 @@ export const createUserWithEmailAndPassword =
     dispatch(submitSignIn(email));
     return dispatch(setUser(
       service.createUserWithEmailAndPassword(email, password)
+      .then(async (user) => {
+        await user.sendEmailVerification();
+        return user;
+      }),
     ));
   };
 
@@ -132,7 +138,11 @@ export default duck.reducer({
       };
     } else {
       return {
-        user: payload,
+        user: payload === null ? payload : {
+          email: payload.email,
+          displayName: payload.displayName || payload.email,
+          emailVerified: payload.emailVerified || false,
+        },
       };
     }
   },

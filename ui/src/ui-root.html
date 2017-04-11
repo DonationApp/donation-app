@@ -41,6 +41,9 @@
         background-color: var(--app-primary-color);
       } app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
+      } app-header paper-icon-button.red {
+        color: red;
+        --paper-icon-button-ink-color: red;
       }
 
       .drawer-list {
@@ -104,7 +107,7 @@
               <paper-icon-button id="signIn" icon="social:person-outline" on-tap="_signIn"></paper-icon-button>
             </template>
             <template is="dom-if" if="[[isSignedIn]]">
-              <paper-icon-button id="signOut" icon="social:person" on-tap="_signOut"></paper-icon-button>
+              <paper-icon-button id="signOut" icon="social:person" on-tap="_signOut" class$="[[_getIconClass(isEmailVerified)]]"></paper-icon-button>
             </template>
             <template is="dom-if" if="[[isPending]]">
               <paper-spinner-lite id="pending" class="white" active></paper-spinner-lite>
@@ -142,6 +145,10 @@
           type: Boolean,
           statePath: app.auth.isSignedOut,
         },
+        isEmailVerified: {
+          type: Boolean,
+          statePath: app.auth.isEmailVerified,
+        },
         isSignedIn: {
           type: Boolean,
           statePath: app.auth.isSignedIn,
@@ -165,6 +172,9 @@
       },
       attached: function() {
         this.loadResources(this.resolveUrl('../../locales.json'));
+      },
+      _getIconClass: function(isEmailVerified) {
+        return isEmailVerified ? '' : 'red';
       },
       _getPageTitle: function(localize, page) {
         return localize(page + '-page-title') || localize('not-found-page-title');

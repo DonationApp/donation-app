@@ -36,18 +36,28 @@
         [{
           description: 'when sign in is pending',
           selector: 'isPending',
+          emailVerified: false,
           signInIcon: 'undefined',
           signOutIcon: 'undefined',
           pendingIcon: 'ok',
         }, {
+          description: 'when signed in but email not verified',
+          selector: 'isSignedIn',
+          emailVerified: false,
+          signInIcon: 'undefined',
+          signOutIcon: 'ok',
+          pendingIcon: 'undefined',
+        }, {
           description: 'when signed in',
           selector: 'isSignedIn',
+          emailVerified: true,
           signInIcon: 'undefined',
           signOutIcon: 'ok',
           pendingIcon: 'undefined',
         }, {
           description: 'when signed out',
           selector: 'isSignedOut',
+          emailVerified: false,
           signInIcon: 'ok',
           signOutIcon: 'undefined',
           pendingIcon: 'undefined',
@@ -57,12 +67,19 @@
           describe.skip(signInCase.description, function() {
             beforeEach(function(done) {
               app.auth[signInCase.selector].value = true;
+              app.auth.isEmailVerified.value = signInCase.emailVerified;
               app.helpers.notifyStateChange();
               flush(done);
             });
 
             it('should set the visibility of the pending icon', function() {
               expect(uiRoot.$.pending).to.be[signInCase.pendingIcon];
+            });
+
+            it('should set the color of the sign in icon', function() {
+              if (signInCase.signInIcon === 'ok') {
+                uiRoot.$.signIn.class.should.equal(signInCase.emailVerified ? '' : 'red');
+              }
             });
 
             it('should set the visibility of the sign in icon', function() {
