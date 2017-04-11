@@ -19,7 +19,7 @@
       var errorView;
 
       describe('error-view', function() {
-        beforeEach(function() {
+        beforeEach(function(done) {
           errorView = fixture('default attributes');
           const stringsLoaded = function() {
             errorView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
