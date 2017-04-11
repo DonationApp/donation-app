@@ -23,6 +23,10 @@ class Service {
     return firebase.auth().signInWithPopup(provider);
   }
 
+  static createUserWithEmailAndPassword(email, password) {
+    return firebase.auth().createUserWithEmailAndPassword(email, password);
+  }
+
   static signInWithEmailAndPassword(email, password) {
     return firebase.auth().signInWithEmailAndPassword(email, password);
   }

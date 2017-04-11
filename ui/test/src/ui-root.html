@@ -78,13 +78,31 @@
         // These tests for dom-if elements are not working but the
         // functionality is :s
         describe.skip('when the sign out button is clicked', function() {
-          beforeEach(function(done) {
-            app.auth.isSignedIn.value = true;
-            app.helpers.notifyStateChange();
-            flush(function() {
-              sinon.stub(uiRoot.$.signOutContainer, 'show');
-              uiRoot.$.signOut.click();
+          it('should fire a show-sign-out event', function(done) {
+            uiRoot.addEventListener('show-sign-out', function() {
+              done();
             });
+            uiRoot.$.signOut.click();
+          });
+        });
+
+        // These tests for dom-if elements are not working but the
+        // functionality is :s
+        describe.skip('when the sign in button is clicked', function() {
+          it('should fire a show-sign-in event', function(done) {
+            uiRoot.addEventListener('show-sign-in', function(e) {
+              e.detail.email.should.be.undefined;
+              e.detail.password.should.be.undefined;
+              done();
+            });
+            uiRoot.$.signIn.click();
+          });
+        });
+
+        describe('when a show-sign-out event is received', function() {
+          beforeEach(function() {
+            sinon.stub(uiRoot.$.signOutContainer, 'show');
+            uiRoot.fire('show-sign-out');
           });
 
           afterEach(function() {
@@ -93,18 +111,15 @@
 
           it('should show the sign-out container', function() {
             uiRoot.$.signOutContainer.show.should.have.been.calledOnce;
-          })
+          });
         });
 
-        // These tests for dom-if elements are not working but the
-        // functionality is :s
-        describe.skip('when the sign in button is clicked', function() {
-          beforeEach(function(done) {
-            app.auth.isSignedOut.value = true;
-            app.helpers.notifyStateChange();
-            flush(function() {
-              sinon.stub(uiRoot.$.signInContainer, 'show');
-              uiRoot.$.signIn.click();
+        describe('when a show-sign-in event is received', function() {
+          beforeEach(function() {
+            sinon.stub(uiRoot.$.signInContainer, 'show');
+            uiRoot.fire('show-sign-in', {
+              email: 'email',
+              password: 'password',
             });
           });
 
@@ -114,6 +129,32 @@
 
           it('should show the sign-in container', function() {
             uiRoot.$.signInContainer.show.should.have.been.calledOnce;
+            uiRoot.$.signInContainer.show.should.have.been.calledWith({
+              email: 'email',
+              password: 'password',
+            });
+          })
+        });
+
+        describe('when a show-register-new-user event is received', function() {
+          beforeEach(function() {
+            sinon.stub(uiRoot.$.registerNewUserContainer, 'show');
+            uiRoot.fire('show-register-new-user', {
+              email: 'email',
+              password: 'password',
+            });
+          });
+
+          afterEach(function() {
+            uiRoot.$.registerNewUserContainer.show.restore();
+          })
+
+          it('should show the register-new-user container', function() {
+            uiRoot.$.registerNewUserContainer.show.should.have.been.calledOnce;
+            uiRoot.$.registerNewUserContainer.show.should.have.been.calledWith({
+              email: 'email',
+              password: 'password',
+            });
           })
         });
 

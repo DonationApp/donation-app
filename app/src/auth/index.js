@@ -76,6 +76,7 @@ export const getSubmittedEmail = createSelector(
 //
 export const submitSignIn = duck.action('SUBMIT_SIGN_IN');
 export const reset = duck.action('RESET');
+export const resetError = duck.action('RESET_ERROR');
 export const setUser = duck.action('SET_USER');
 
 export const signInWithGoogle = () => (dispatch) => {
@@ -90,6 +91,14 @@ export const signInWithGoogleRedirect = () => () => {
   // actually don't bother dispatching any actions, this
   // will do a redirect anyway
 };
+
+export const createUserWithEmailAndPassword =
+  (email, password) => (dispatch) => {
+    dispatch(submitSignIn(email));
+    return dispatch(setUser(
+      service.createUserWithEmailAndPassword(email, password)
+    ));
+  };
 
 export const signInWithEmailAndPassword = (email, password) => (dispatch) => {
   dispatch(submitSignIn(email));
@@ -108,6 +117,9 @@ export const signOut = () => {
 //
 export default duck.reducer({
   [reset]: () => initialState,
+  [resetError]: (state) => Object.assign({}, state, {
+    error: undefined,
+  }),
   [submitSignIn]: (state, {payload}) => ({
     pending: true,
     email: payload,

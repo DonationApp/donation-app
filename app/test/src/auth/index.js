@@ -123,6 +123,17 @@ describe('auth', () => {
             );
           },
         },
+        'creating a user with email and password': {
+          action: auth.createUserWithEmailAndPassword(email, password),
+          submittedEmail: email,
+          checkAuthCall: () => {
+            service.createUserWithEmailAndPassword.should.have.been.calledOnce;
+            service.createUserWithEmailAndPassword.should.have.been.calledWith(
+              email,
+              password,
+            );
+          },
+        },
       }, (signInCase, description) => {
         describe(description, () => {
           _.forEach({
@@ -235,6 +246,26 @@ describe('auth', () => {
                   });
                 });
               }
+
+              describe('then reset error', () => {
+                before(async () => {
+                  await reset({
+                    actions: [
+                      signInCase.action,
+                    ],
+                    serviceResults: resultCase.serviceResults,
+                  });
+                  store.dispatch(auth.resetError());
+                });
+
+                it('should not report an error', () => {
+                  auth.hasError(states[0]).should.be.false;
+                });
+
+                it('should not have error text', () => {
+                  auth.getErrorText(states[0]).should.eql('');
+                });
+              });
 
               describe('then set user', () => {
                 _.forEach({

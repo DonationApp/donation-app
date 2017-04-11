@@ -7,25 +7,25 @@
     <script src="../../../../../web-component-tester/browser.js"></script>
 
     <link rel="import" href="../../helpers/common.html">
-    <link rel="import" href="../../../src/sign-in/sign-in-container.html">
+    <link rel="import" href="../../../src/register-new-user/register-new-user-container.html">
   </head>
   <body>
     <test-fixture id="default attributes">
       <template>
-        <sign-in-container message="message"></sign-in-container>
+        <register-new-user-container></register-new-user-container>
       </template>
     </test-fixture>
     <script>
-      var signInContainer;
+      var registerNewUserContainer;
 
-      describe('sign-in-container', function() {
+      describe('register-new-user-container', function() {
         beforeEach(function() {
           app.helpers.reset();
-          signInContainer = fixture('default attributes');
+          registerNewUserContainer = fixture('default attributes');
         });
 
-        it('should contain a sign-in view', function() {
-          signInContainer.$.view.is.should.eql('sign-in-view');
+        it('should contain a register-new-user view', function() {
+          registerNewUserContainer.$.view.is.should.eql('register-new-user-view');
         });
 
         describe('when there is an error', function() {
@@ -36,11 +36,11 @@
           });
 
           it('should set the hasError attribute of the view to true', function() {
-            signInContainer.$.view.hasError.should.be.true;
+            registerNewUserContainer.$.view.hasError.should.be.true;
           });
 
           it('should set the errorText attribute of the view', function() {
-            signInContainer.$.view.errorText.should.eql('ERROR');
+            registerNewUserContainer.$.view.errorText.should.eql('ERROR');
           });
         });
 
@@ -51,7 +51,7 @@
           });
 
           it('should set the isSignedOut attribute of the view to true', function() {
-            signInContainer.$.view.isSignedOut.should.be.true;
+            registerNewUserContainer.$.view.isSignedOut.should.be.true;
           });
         });
 
@@ -62,7 +62,7 @@
           });
 
           it('should set the isPending attribute of the view to true', function() {
-            signInContainer.$.view.isPending.should.be.true;
+            registerNewUserContainer.$.view.isPending.should.be.true;
           });
         });
 
@@ -73,63 +73,51 @@
           });
 
           it('should set the isSignedIn attribute of the view to true', function() {
-            signInContainer.$.view.isSignedIn.should.be.true;
+            registerNewUserContainer.$.view.isSignedIn.should.be.true;
           });
         });
 
-        describe('on sign-in event', function() {
-          it('should dispatch a signInWithEmailAndPassword action', function() {
+        describe('on register-new-user event', function() {
+          it('should dispatch a register action', function() {
             app.helpers.reset();
-            signInContainer.fire('sign-in', {
+            registerNewUserContainer.fire('register-new-user', {
               email: 'email',
               password: 'password',
             });
-            app.auth.signInWithEmailAndPassword
+            app.auth.createUserWithEmailAndPassword
             .should.have.been.calledWith('email', 'password');
             store.dispatch.should.have.been.calledWith(
-              app.auth.signInWithEmailAndPassword.value
-            );
-          });
-        });
-
-        describe('on sign-in-with-google event', function() {
-          it('should dispatch a signInWithGoogle action', function() {
-            app.helpers.reset();
-            signInContainer.fire('sign-in-with-google');
-            app.auth.signInWithGoogleRedirect
-            .should.have.been.calledOnce;
-            store.dispatch.should.have.been.calledWith(
-              app.auth.signInWithGoogleRedirect.value
+              app.auth.createUserWithEmailAndPassword.value
             );
           });
         });
 
         describe('#show', function() {
           beforeEach(function() {
-            sinon.stub(signInContainer.$.view, 'show');
-            signInContainer.show({
+            sinon.stub(registerNewUserContainer.$.view, 'show');
+            registerNewUserContainer.show({
               email: 'email',
               password: 'password',
             });
           });
 
           afterEach(function() {
-            signInContainer.$.view.show.restore();
+            registerNewUserContainer.$.view.show.restore();
           });
 
-          it('should show the sign-out view', function() {
-            signInContainer.$.view.show.should.have.been.calledOnce;
-            signInContainer.$.view.show.should.have.been.calledWith({
+          it('should show the register-new-user view', function() {
+            registerNewUserContainer.$.view.show.should.have.been.calledOnce;
+            registerNewUserContainer.$.view.show.should.have.been.calledWith({
               email: 'email',
               password: 'password',
             });
           });
         });
 
-        describe('when a sign-in-dismissed event is received', function() {
+        describe('when a register-new-user-dismissed event is received', function() {
           it('should dispatch a resetError action', function() {
             app.helpers.reset();
-            signInContainer.fire('sign-in-dismissed');
+            registerNewUserContainer.fire('register-new-user-dismissed');
             app.auth.resetError.should.have.been.calledOnce;
             store.dispatch.should.have.been.calledWith(
               app.auth.resetError.value

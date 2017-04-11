@@ -4,24 +4,24 @@
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 
-<dom-module id="sign-in-view">
+<dom-module id="register-new-user-view">
   <template>
     <paper-dialog id="dialog" on-iron-overlay-closed="_closed">
-      <h3 id="message">[[localize('sign-in-message')]]</h3>
+      <h3 id="message">[[localize('register-new-user-message')]]</h3>
       <div id="error" hidden$="[[!hasError]]">[[errorText]]</div>
       <paper-input id="email" label="[[localize('email-label')]]" disabled$="[[isPending]]" autofocus></paper-input>
-      <paper-input id="password" label="[[localize('password-label')]]" type="password" disabled$="[[isPending]]"></paper-input>
+      <paper-input id="password" label="[[localize('password-label')]]" type="password" disabled$="[[isPending]]" value="{{password}}"></paper-input>
+      <paper-input id="confirmPassword" label="[[localize('confirm-password-label')]]" type="password" disabled$="[[isPending]]" error-message="[[localize('confirm-password-error')]]" value="{{confirmPassword}}"></paper-input>
       <div class="buttons">
         <paper-button id="cancel" dialog-dismiss>[[_getCancelButtonText(localize, isPending)]]</paper-button>
+        <paper-button id="register" on-tap="_register" disabled$="[[_isRegisterDisabled(isPending, password, confirmPassword)]]">[[localize('register-button')]]</paper-button>
         <paper-button id="signIn" on-tap="_signIn" disabled$="[[isPending]]">[[localize('sign-in-button')]]</paper-button>
-        <paper-button id="signInWithGoogle" on-tap="_signInWithGoogle" disabled$="[[isPending]]">[[localize('sign-in-with-google-button')]]</paper-button>
-        <paper-button id="register" on-tap="_register" disabled$="[[isPending]]">[[localize('register-button')]]</paper-button>
       </div>
     </paper-dialog>
   </template>
   <script>
     Polymer({
-      is: 'sign-in-view',
+      is: 'register-new-user-view',
       behaviors: [
         Polymer.AppLocalizeBehavior,
       ],
@@ -32,6 +32,14 @@
         language: {
           type: String,
           value: 'en',
+        },
+        password: {
+          type: String,
+          observer: '_validatePassword',
+        },
+        confirmPassword: {
+          type: String,
+          observer: '_validatePassword',
         },
         hasError: {
           type: Boolean,
@@ -55,25 +63,37 @@
           value: false,
         },
       },
+      _validatePassword: function() {
+        this.$.confirmPassword.invalid = (this.password !== this.confirmPassword);
+      },
+      _isRegisterDisabled: function(isPending, password, confirmPassword) {
+        if (isPending) {
+          return true;
+        }
+        if (password !== confirmPassword) {
+          return true;
+        }
+        return false;
+      },
       _getCancelButtonText: function(localize, isPending) {
         return isPending ? localize('dismiss-button') : localize('cancel-button');
       },
-      _signIn: function() {
+      _register: function() {
         var email = this.$.email.value;
         var password = this.$.password.value;
-        this.fire('sign-in', {
+        this.fire('register-new-user', {
           email: email,
           password: password,
         });
       },
       _signInWithGoogle: function() {
-        this.fire('sign-in-with-google');
+        this.fire('register-new-user-with-google');
       },
-      _register: function() {
+      _signIn: function() {
         var email = this.$.email.value;
         var password = this.$.password.value;
         this.$.dialog.close();
-        this.fire('show-register-new-user', {
+        this.fire('show-sign-in', {
           email: email,
           password: password,
         });
@@ -86,11 +106,13 @@
       _closed: function() {
         this.$.email.value = '';
         this.$.password.value = '';
-        this.fire('sign-in-dismissed');
+        this.$.confirmPassword.value = '';
+        this.fire('register-new-user-dismissed');
       },
       show: function(params) {
         this.$.email.value = params.email;
         this.$.password.value = params.password;
+        this.$.confirmPassword.value = '';
         this.$.dialog.open();
       },
     });

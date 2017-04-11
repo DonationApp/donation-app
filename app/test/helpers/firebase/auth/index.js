@@ -44,6 +44,19 @@ const signInWithPopup = sinon.spy(() => {
 
 const signInWithRedirect = sinon.spy();
 
+const createUserWithEmailAndPassword = sinon.spy(() => {
+  return new Promise((resolve, reject) => {
+    process.nextTick(() => {
+      const result = results.shift();
+      if (_.isUndefined(result.error)) {
+        resolve(result.success);
+      } else {
+        reject(result.error);
+      }
+    });
+  });
+});
+
 const signInWithEmailAndPassword = sinon.spy(() => {
   return new Promise((resolve, reject) => {
     process.nextTick(() => {
@@ -79,6 +92,7 @@ class GoogleAuthProvider {
 const authInstance = {
   signInWithPopup,
   signInWithRedirect,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
   getRedirectResult,
@@ -102,6 +116,7 @@ export const helpers = {
   },
   reset: () => {
     signInWithPopup.reset();
+    createUserWithEmailAndPassword.reset();
     signInWithEmailAndPassword.reset();
     signOut.reset();
     helpers.googleAuthProvider = null;

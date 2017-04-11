@@ -24,6 +24,7 @@
 <link rel="import" href="./recurring/recurring-container.html">
 <link rel="import" href="./sign-out/sign-out-container.html">
 <link rel="import" href="./sign-in/sign-in-container.html">
+<link rel="import" href="./register-new-user/register-new-user-container.html">
 
 <dom-module id="ui-root">
   <template>
@@ -38,8 +39,7 @@
       app-header {
         color: #fff;
         background-color: var(--app-primary-color);
-      }
-      app-header paper-icon-button {
+      } app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
       }
 
@@ -76,6 +76,7 @@
     <error-container id="error"></error-container>
     <sign-out-container id="signOutContainer"></sign-out-container>
     <sign-in-container id="signInContainer"></sign-in-container>
+    <register-new-user-container id="registerNewUserContainer"></register-new-user-container>
     <app-drawer-layout id="drawerLayout" fullbleed>
       <app-drawer id="drawer">
         <app-toolbar id="drawerToolbar">
@@ -157,6 +158,11 @@
       observers: [
         '_routePageChange(routeData.page)',
       ],
+      listeners: {
+        'show-sign-in': '_showSignIn',
+        'show-sign-out': '_showSignOut',
+        'show-register-new-user': '_showRegisterNewUser',
+      },
       attached: function() {
         this.loadResources(this.resolveUrl('../../locales.json'));
       },
@@ -170,10 +176,22 @@
         }
       },
       _signIn: function() {
-        this.$.signInContainer.show();
+        this.fire('show-sign-in', {
+          email: '',
+          password: '',
+        });
       },
       _signOut: function() {
+        this.fire('show-sign-out');
+      },
+      _showSignIn: function(event) {
+        this.$.signInContainer.show(event.detail);
+      },
+      _showSignOut: function() {
         this.$.signOutContainer.show();
+      },
+      _showRegisterNewUser: function(event) {
+        this.$.registerNewUserContainer.show(event.detail);
       },
     });
   </script>

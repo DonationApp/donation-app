@@ -72,6 +72,10 @@
           it('should disable the sign in with google button', function() {
             signInView.$.signInWithGoogle.disabled.should.be.true;
           });
+
+          it('should disable the register button', function() {
+            signInView.$.register.disabled.should.be.true;
+          });
         });
 
         describe('when the sign in button is clicked', function() {
@@ -102,11 +106,19 @@
 
         describe('#show', function() {
           beforeEach(function() {
-            signInView.show();
+            signInView.show({
+              email: 'email',
+              password: 'password',
+            });
           });
 
           it('should open the dialog', function() {
             signInView.$.dialog.opened.should.be.true;
+          });
+
+          it('should set the fields', function() {
+            signInView.$.email.value.should.eql('email');
+            signInView.$.password.value.should.eql('password');
           });
 
           describe('and then become signed in', function() {
@@ -115,7 +127,43 @@
             });
 
             it('should close the dialog', function() {
-              signInView.$.dialog.opened.should.be.close;
+              signInView.$.dialog.opened.should.be.false;
+            });
+          });
+
+          describe('and when the register button is clicked', function() {
+            var event;
+            beforeEach(function(done) {
+              event = undefined;
+              signInView.$.email.value = 'email';
+              signInView.$.password.value = 'password';
+              signInView.addEventListener('show-register-new-user', function(e) {
+                event = e;
+                done();
+              });
+              signInView.$.register.click();
+            });
+
+            it('should fire a show-register-new-user event', function() {
+              event.detail.email.should.eql('email');
+              event.detail.password.should.eql('password');
+            });
+
+            it('should close the dialog', function() {
+              signInView.$.dialog.opened.should.be.false;
+            });
+          });
+
+          describe('and when the dialog is closed', function() {
+            it('should fire a sign-in-dismissed event and clear the email and password fields', function(done) {
+              signInView.$.email.value = 'email';
+              signInView.$.password.value = 'password';
+              signInView.addEventListener('sign-in-dismissed', function() {
+                signInView.$.email.value.should.eql('');
+                signInView.$.password.value.should.eql('');
+                done();
+              });
+              signInView.$.dialog.close();
             });
           });
         });

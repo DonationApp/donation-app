@@ -167,6 +167,50 @@ describe('service', () => {
     });
   });
 
+  describe('createUserWithEmailAndPassword', () => {
+    describe('with success', () => {
+      before(() => {
+        helpers.reset();
+        helpers.auth.setResults([{
+          success: user,
+        }]);
+      });
+
+      it('should resolve to the user', async () => {
+        await service.createUserWithEmailAndPassword(
+          email,
+          password,
+        ).should.eventually.eql(user);
+        auth.createUserWithEmailAndPassword.should.have.been.calledOnce;
+        auth.createUserWithEmailAndPassword.should.have.been.calledWith(
+          email,
+          password,
+        );
+      });
+    });
+
+    describe('with failure', () => {
+      before(() => {
+        helpers.reset();
+        helpers.auth.setResults([{
+          error: error,
+        }]);
+      });
+
+      it('should reject with the error', async () => {
+        await service.createUserWithEmailAndPassword(
+          email,
+          password,
+        ).should.be.rejectedWith(error);
+        auth.createUserWithEmailAndPassword.should.have.been.calledOnce;
+        auth.createUserWithEmailAndPassword.should.have.been.calledWith(
+          email,
+          password,
+        );
+      });
+    });
+  });
+
   describe('signOut', () => {
     describe('with success', () => {
       before(() => {

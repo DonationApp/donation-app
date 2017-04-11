@@ -28,6 +28,8 @@ app.helpers.stub(['auth'], 'getSubmittedEmail', '');
 app.helpers.stub(['auth'], 'getDisplayName', '');
 
 // actions
+app.helpers.stub(['auth'], 'resetError');
+app.helpers.stub(['auth'], 'createUserWithEmailAndPassword');
 app.helpers.stub(['auth'], 'signInWithEmailAndPassword');
 app.helpers.stub(['auth'], 'signInWithGoogle');
 app.helpers.stub(['auth'], 'signInWithGoogleRedirect');

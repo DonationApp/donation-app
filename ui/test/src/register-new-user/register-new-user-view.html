@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../helpers/common.html">
+    <link rel="import" href="../../../src/register-new-user/register-new-user-view.html">
+  </head>
+  <body>
+    <test-fixture id="default attributes">
+      <template>
+        <register-new-user-view></register-new-user-view>
+      </template>
+    </test-fixture>
+    <script>
+      var registerNewUserView;
+
+      describe('register-new-user-view', function() {
+        beforeEach(function(done) {
+          registerNewUserView = fixture('default attributes');
+          const stringsLoaded = function() {
+            registerNewUserView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            done();
+          };
+          registerNewUserView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+        });
+
+        it('should instantiate', function() {
+          registerNewUserView.is.should.eql('register-new-user-view');
+        });
+
+        it('should have a cancel button', function() {
+          registerNewUserView.$.cancel.textContent.should.eql(registerNewUserView.localize('cancel-button'));
+        });
+
+        describe('when there is an error', function() {
+          beforeEach(function() {
+            registerNewUserView.hasError = true;
+            registerNewUserView.errorText = 'ERROR';
+          });
+
+          it('should display the error text', function() {
+            registerNewUserView.$.error.hidden.should.be.false;
+            registerNewUserView.$.error.textContent.should.eql('ERROR');
+          });
+        });
+
+        describe('when pending', function() {
+          beforeEach(function() {
+            registerNewUserView.isPending = true;
+          });
+
+          it('should disable the email field', function() {
+            registerNewUserView.$.email.disabled.should.be.true;
+          });
+
+          it('should disable the password field', function() {
+            registerNewUserView.$.password.disabled.should.be.true;
+          });
+
+          it('should disable the confirm password field', function() {
+            registerNewUserView.$.confirmPassword.disabled.should.be.true;
+          });
+
+          it('should change the cancel button to dismiss', function() {
+            registerNewUserView.$.cancel.textContent.should.eql(registerNewUserView.localize('dismiss-button'));
+          });
+
+          it('should disable the sign in button', function() {
+            registerNewUserView.$.signIn.disabled.should.be.true;
+          });
+
+          it('should disable the register button', function() {
+            registerNewUserView.$.register.disabled.should.be.true;
+          });
+        });
+
+        describe('when the passwords don\'t match', function() {
+          beforeEach(function() {
+            registerNewUserView.$.password.value = 'password';
+            registerNewUserView.$.confirmPassword.value = 'passwor';
+          });
+
+          it('should disable the register button', function() {
+            registerNewUserView.$.register.disabled.should.be.true;
+          });
+
+          it('should set the confirm password error', function() {
+            registerNewUserView.$.confirmPassword.invalid.should.be.true;
+          });
+        });
+
+        describe('when the register button is clicked', function() {
+          it('should fire a register-new-user event', function(done) {
+            registerNewUserView.$.email.value = 'email';
+            registerNewUserView.$.password.value = 'password';
+            registerNewUserView.$.confirmPassword.value = 'password';
+            registerNewUserView.addEventListener('register-new-user', function(event) {
+              event.detail.should.eql({
+                email: 'email',
+                password: 'password',
+              });
+              done();
+            });
+            registerNewUserView.$.register.click();
+          });
+        });
+
+        describe('#show', function() {
+          beforeEach(function() {
+            registerNewUserView.show({
+              email: 'email',
+              password: 'password',
+            });
+          });
+
+          it('should open the dialog', function() {
+            registerNewUserView.$.dialog.opened.should.be.true;
+          });
+
+          it('should set the fields', function() {
+            registerNewUserView.$.email.value.should.eql('email');
+            registerNewUserView.$.password.value.should.eql('password');
+            registerNewUserView.$.confirmPassword.value.should.eql('');
+          });
+
+          describe('and then become signed in', function() {
+            beforeEach(function() {
+              registerNewUserView.isSignedIn = true;
+            });
+
+            it('should close the dialog', function() {
+              registerNewUserView.$.dialog.opened.should.be.false;
+            });
+          });
+
+          describe('and when the sign in button is clicked', function() {
+            var event;
+            beforeEach(function(done) {
+              event = undefined;
+              registerNewUserView.$.email.value = 'email';
+              registerNewUserView.$.password.value = 'password';
+              registerNewUserView.addEventListener('show-sign-in', function(e) {
+                event = e;
+                done();
+              });
+              registerNewUserView.$.signIn.click();
+            });
+
+            it('should fire a show-sign-in event', function() {
+              event.detail.email.should.eql('email');
+              event.detail.password.should.eql('password');
+            });
+
+            it('should close the dialog', function() {
+              registerNewUserView.$.dialog.opened.should.be.false;
+            });
+          });
+
+          describe('and when the dialog is closed', function() {
+            it('should fire a register-new-user-dismissed event and clear the email and password fields', function(done) {
+              registerNewUserView.$.email.value = 'email';
+              registerNewUserView.$.password.value = 'password';
+              registerNewUserView.addEventListener('register-new-user-dismissed', function() {
+                registerNewUserView.$.email.value.should.eql('');
+                registerNewUserView.$.password.value.should.eql('');
+                done();
+              });
+              registerNewUserView.$.dialog.close();
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

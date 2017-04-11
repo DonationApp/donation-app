@@ -3,6 +3,7 @@ import _ from 'lodash';
 import service from '../../src/service';
 
 const methods = [
+  'createUserWithEmailAndPassword',
   'signInWithGoogle',
   'signInWithGoogleRedirect',
   'signInWithEmailAndPassword',

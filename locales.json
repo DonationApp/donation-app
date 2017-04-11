@@ -9,10 +9,16 @@
     "profile-not-authorized-message": "You need to sign in in order to view your profile",
     "dismiss-button": "Dismiss",
     "cancel-button": "Cancel",
+    "register-new-user-message": "Enter an email and password to register.",
     "sign-in-message": "Enter your email and password to sign in.",
     "sign-out-message": "Are you sure you wish to sign out?",
     "sign-out-button": "Sign Out",
     "sign-in-button": "Sign In",
-    "sign-in-with-google-button": "Sign In With Google"
+    "sign-in-with-google-button": "Sign In With Google",
+    "register-button": "Register",
+    "confirm-password-error": "The passwords do not match",
+    "email-label": "Email",
+    "password-label": "Password",
+    "confirm-password-label": "Confirm password"
   }
 }

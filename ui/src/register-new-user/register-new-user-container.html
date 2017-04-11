@@ -1,10 +1,10 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../redux-behavior.html">
-<link rel="import" href="./sign-in-view.html">
+<link rel="import" href="./register-new-user-view.html">
 
-<dom-module id="sign-in-container">
+<dom-module id="register-new-user-container">
   <template>
-    <sign-in-view
+    <register-new-user-view
       id="view"
       has-error="[[hasError]]"
       error-text="[[errorText]]"
@@ -12,11 +12,11 @@
       is-signed-out="[[isSignedOut]]"
       is-pending="[[isPending]]"
     >
-    </sign-in-view>
+    </register-new-user-view>
   </template>
   <script>
     Polymer({
-      is: 'sign-in-container',
+      is: 'register-new-user-container',
       behaviors: [ReduxBehavior],
       properties: {
         message: {
@@ -45,26 +45,19 @@
         },
       },
       actions: {
-        signInWithGoogleRedirect: app.auth.signInWithGoogleRedirect,
-        signInWithEmailAndPassword: app.auth.signInWithEmailAndPassword,
+        createUserWithEmailAndPassword: app.auth.createUserWithEmailAndPassword,
         resetError: app.auth.resetError,
       },
       listeners: {
-        'sign-in': '_signIn',
-        'sign-in-with-google': '_signInWithGoogle',
-        'sign-in-dismissed': '_signInDismissed',
+        'register-new-user': '_register',
+        'register-new-user-dismissed': '_registerDismissed',
       },
-      _signInDismissed: function() {
+      _registerDismissed: function() {
         this.dispatch('resetError');
       },
-      _signInWithGoogle: function() {
+      _register: function(event) {
         return this.dispatch(
-          'signInWithGoogleRedirect'
-        );
-      },
-      _signIn: function(event) {
-        return this.dispatch(
-          'signInWithEmailAndPassword',
+          'createUserWithEmailAndPassword',
           event.detail.email,
           event.detail.password
         );

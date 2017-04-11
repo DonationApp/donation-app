@@ -1,5 +1,6 @@
 /* globals module */
 module.exports = {
+  expanded: true,
   suites: ['ui/test/src/'],
   plugins: {
     // TODO: istanbul plugin doesn't work with polymer-cli 0.17.0
