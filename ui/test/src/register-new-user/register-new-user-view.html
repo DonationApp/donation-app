@@ -132,8 +132,19 @@
               registerNewUserView.isSignedIn = true;
             });
 
-            it('should close the dialog', function() {
+            it('should close the dialog and show the verification notice', function() {
               registerNewUserView.$.dialog.opened.should.be.false;
+              registerNewUserView.$.verificationDialog.opened.should.be.true;
+            });
+
+            describe('and then became verified', function() {
+              beforeEach(function() {
+                registerNewUserView.isEmailVerified = true;
+              });
+
+              it('should close the verification notice', function() {
+                registerNewUserView.$.verificationDialog.opened.should.be.false;
+              });
             });
           });
 

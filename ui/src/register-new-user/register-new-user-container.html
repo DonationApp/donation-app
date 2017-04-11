@@ -9,6 +9,7 @@
       has-error="[[hasError]]"
       error-text="[[errorText]]"
       is-signed-in="[[isSignedIn]]"
+      is-email-verified="[[isEmailVerified]]"
       is-signed-out="[[isSignedOut]]"
       is-pending="[[isPending]]"
     >
@@ -34,6 +35,10 @@
         isSignedIn: {
           type: Boolean,
           statePath: app.auth.isSignedIn,
+        },
+        isEmailVerified: {
+          type: Boolean,
+          statePath: app.auth.isEmailVerified,
         },
         isSignedOut: {
           type: Boolean,

@@ -19,6 +19,8 @@
     "confirm-password-error": "The passwords do not match",
     "email-label": "Email",
     "password-label": "Password",
-    "confirm-password-label": "Confirm password"
+    "confirm-password-label": "Confirm password",
+    "register-new-user-complete-title": "New user created",
+    "register-new-user-complete-message": "An email has been sent to the registered address for verification. To complete your account registration click the verification link contained in that email."
   }
 }

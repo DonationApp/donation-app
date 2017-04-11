@@ -18,6 +18,13 @@
         <paper-button id="signIn" on-tap="_signIn" disabled$="[[isPending]]">[[localize('sign-in-button')]]</paper-button>
       </div>
     </paper-dialog>
+    <paper-dialog id="verificationDialog">
+      <h3>[[localize('register-new-user-complete-title')]]</h3>
+      <div>[[localize('register-new-user-complete-message')]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[localize('dismiss-button')]]</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -53,6 +60,11 @@
           type: Boolean,
           value: false,
           observer: '_isSignedInChange',
+        },
+        isEmailVerified: {
+          type: Boolean,
+          value: false,
+          observer: '_isEmailVerifiedChange',
         },
         isSignedOut: {
           type: Boolean,
@@ -101,6 +113,12 @@
       _isSignedInChange: function(isSignedIn) {
         if (isSignedIn) {
           this.$.dialog.close();
+          this.$.verificationDialog.open();
+        }
+      },
+      _isEmailVerifiedChange: function(isEmailVerified) {
+        if (isEmailVerified) {
+          this.$.verificationDialog.close();
         }
       },
       _closed: function() {

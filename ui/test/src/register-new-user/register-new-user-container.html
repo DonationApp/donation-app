@@ -77,6 +77,17 @@
           });
         });
 
+        describe('when email is verified', function() {
+          beforeEach(function() {
+            app.auth.isEmailVerified.value = true;
+            app.helpers.notifyStateChange();
+          });
+
+          it('should set the isEmailVerified attribute of the view to true', function() {
+            registerNewUserContainer.$.view.isEmailVerified.should.be.true;
+          });
+        });
+
         describe('on register-new-user event', function() {
           it('should dispatch a register action', function() {
             app.helpers.reset();
