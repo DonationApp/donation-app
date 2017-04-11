@@ -21,35 +21,21 @@ cp -r config/production.json config/local.json
 
 Then update the `config/local.json` to your development Firebase settings
 
-After cloning/pulling and before starting the server run the following to install bower dependencies, create config files, run tests, build etc
+Before starting the server run the following to install bower dependencies, create config files, run tests, build etc
 
 ```
 npm install
 npm run build
 ```
 
-During development it is recommended to run the following command to watch for changes and continually test
+To update the database rules on your development server
+
+```
+npm run deploy
+```
+
+During development it is recommended to run the following command to watch for changes and continually test (on Windows this needs to be run in PowerShell)
 
 ```
 npm start
 ```
-
-## Travis-CI
-
-To use the travis config you will need to remove the current encrypted environment variables (if present) and add your own encrypted authentication information for Firebase and SauceLabs
-
-Install the `travis` gem
-
-```
-gem install travis
-```
-
-Then run
-
-```
-travis encrypt FIREBASE_TOKEN=<your firebase token> --add
-travis encrypt SAUCE_USERNAME=<your saucelabs username> --add
-travis encrypt SAUCE_ACCESS_KEY=<your saucelabs access key> --add
-```
-
-You will also need to enable the project at [TravisCI](https://travis-ci.org) and [Coveralls](https://coveralls.io/)
