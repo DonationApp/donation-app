@@ -17,12 +17,12 @@ const composeEnhancers = composeWithDevTools({
   // devtool options
 });
 
-import errorReducer from './error';
-import * as error from './error';
+import errorReducer from './ducks/error';
+import * as error from './ducks/error';
 export {error as error};
 
-import authReducer from './auth';
-import * as auth from './auth';
+import authReducer from './ducks/auth';
+import * as auth from './ducks/auth';
 export {auth as auth};
 
 export default createStore(combineReducers({

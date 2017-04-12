@@ -1,11 +1,11 @@
-import service from '../service';
+import authService from './service';
 import {
   isUndefined,
 } from 'lodash';
 import {
   createSelector,
 } from 'reselect';
-import Duck from '../duck';
+import Duck from '../../lib/duck';
 
 const initialState = {};
 const duck = new Duck(
@@ -22,7 +22,6 @@ const duck = new Duck(
 const error = duck.selector((state) => state.error);
 const pending = duck.selector((state) => state.pending);
 const user = duck.selector((state) => state.user);
-const email = duck.selector((state) => state.email);
 
 // public selectors
 export const hasError = createSelector(
@@ -64,11 +63,6 @@ export const isSignedOut = createSelector(
   (isSignedIn, isPending) => !isSignedIn && !isPending,
 );
 
-export const getSubmittedEmail = createSelector(
-  email,
-  (email) => isUndefined(email) ? '' : email,
-);
-
 //
 // Private actions
 //
@@ -84,21 +78,28 @@ export const setUser = duck.action('SET_USER');
 export const signInWithGoogle = () => (dispatch) => {
   dispatch(submitSignIn());
   return dispatch(setUser(
-    service.signInWithGoogle()
+    authService.signInWithGoogle()
   ));
 };
 
 export const signInWithGoogleRedirect = () => () => {
-  service.signInWithGoogleRedirect();
+  authService.signInWithGoogleRedirect();
   // actually don't bother dispatching any actions, this
   // will do a redirect anyway
 };
 
+export const signInWithEmailAndPassword = (email, password) => (dispatch) => {
+  dispatch(submitSignIn());
+  return dispatch(setUser(
+    authService.signInWithEmailAndPassword(email, password)
+  ));
+};
+
 export const createUserWithEmailAndPassword =
   (email, password) => (dispatch) => {
-    dispatch(submitSignIn(email));
+    dispatch(submitSignIn());
     return dispatch(setUser(
-      service.createUserWithEmailAndPassword(email, password)
+      authService.createUserWithEmailAndPassword(email, password)
       .then(async (user) => {
         await user.sendEmailVerification();
         return user;
@@ -106,15 +107,8 @@ export const createUserWithEmailAndPassword =
     ));
   };
 
-export const signInWithEmailAndPassword = (email, password) => (dispatch) => {
-  dispatch(submitSignIn(email));
-  return dispatch(setUser(
-    service.signInWithEmailAndPassword(email, password)
-  ));
-};
-
 export const signOut = () => {
-  service.signOut();
+  authService.signOut();
   return setUser(null);
 };
 
@@ -126,15 +120,13 @@ export default duck.reducer({
   [resetError]: (state) => Object.assign({}, state, {
     error: undefined,
   }),
-  [submitSignIn]: (state, {payload}) => ({
+  [submitSignIn]: () => ({
     pending: true,
-    email: payload,
   }),
   [setUser]: (state, {payload, error}) => {
     if (error) {
       return {
         error: payload,
-        email: state.email,
       };
     } else {
       return {

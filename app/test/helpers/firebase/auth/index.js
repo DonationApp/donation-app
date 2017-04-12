@@ -116,6 +116,7 @@ export const helpers = {
   },
   reset: () => {
     signInWithPopup.reset();
+    signInWithRedirect.reset();
     createUserWithEmailAndPassword.reset();
     signInWithEmailAndPassword.reset();
     signOut.reset();

@@ -1,13 +1,8 @@
 import _ from 'lodash';
-import * as auth from '../../../src/auth';
-import reducer from '../../../src/auth';
-import service from '../../../src/service';
-import {
-  stub,
-  reset as serviceReset,
-  restore,
-  setResults,
-} from '../../helpers/service';
+import * as auth from '../../../../src/ducks/auth';
+import reducer from '../../../../src/ducks/auth';
+import authService from '../../../../src/ducks/auth/service';
+import ServiceHelper from '../../../helpers/service';
 import {
   createStore,
   applyMiddleware,
@@ -16,7 +11,10 @@ import {
 import thunk from 'redux-thunk';
 import promise from 'redux-promise';
 
-let states;
+let serviceHelper;
+
+let state;
+let states = [];
 const store = createStore(combineReducers({
   auth: reducer,
 }), applyMiddleware(thunk, promise));
@@ -24,8 +22,8 @@ store.subscribe(() => {
   states.push(store.getState());
 });
 async function reset({actions, serviceResults}) {
-  serviceReset();
-  setResults(serviceResults);
+  serviceHelper.reset();
+  serviceHelper.setResults(serviceResults);
   store.dispatch(auth.reset());
   await actions.reduce(async (promise, action) => {
     await promise;
@@ -40,67 +38,63 @@ const password = 'my password';
 const displayName = 'Fred Bloggs';
 const error = new Error('failed sign in');
 const user = {
-  displayName,
-  email,
+  displayName: displayName,
+  email: email,
   emailVerified,
   sendEmailVerification: sinon.spy(),
 };
 const userWithoutDisplayNameOrEmailVerified = {
-  email,
+  email: email,
   sendEmailVerification: sinon.spy(),
 };
 
 describe('auth', () => {
   describe('with the initial state', () => {
-    before(() => {
-      stub();
-      states = [
-        store.getState(),
-      ];
+    beforeEach(() => {
+      serviceHelper = new ServiceHelper(authService, [
+        'signInWithGoogle',
+        'signInWithGoogleRedirect',
+        'signInWithEmailAndPassword',
+        'createUserWithEmailAndPassword',
+        'signOut',
+      ]);
+      state = store.getState();
     });
 
-    after(() => {
-      restore();
+    afterEach(() => {
+      serviceHelper.restore();
     });
 
     it('should not report an error', () => {
-      auth.hasError(states[0]).should.be.false;
+      auth.hasError(state).should.be.false;
     });
 
     it('should not have error text', () => {
-      auth.getErrorText(states[0]).should.eql('');
+      auth.getErrorText(state).should.eql('');
     });
 
     it('should not be pending', () => {
-      auth.isPending(states[0]).should.be.false;
+      auth.isPending(state).should.be.false;
     });
 
     it('should not have a verified email', () => {
-      auth.isEmailVerified(states[0]).should.eql(false);
+      auth.isEmailVerified(state).should.eql(false);
     });
 
     it('should not be signed in', () => {
-      auth.isSignedIn(states[0]).should.eql(false);
-    });
-
-    it('should not be signed in', () => {
-      auth.isSignedIn(states[0]).should.eql(false);
+      auth.isSignedIn(state).should.eql(false);
     });
 
     it('should not have a display name', () => {
-      auth.getDisplayName(states[0]).should.eql('');
+      auth.getDisplayName(state).should.eql('');
     });
 
     it('should be signed out', () => {
-      auth.isSignedOut(states[0]).should.eql(true);
-    });
-
-    it('should not have a submitted email', () => {
-      auth.getSubmittedEmail(states[0]).should.eql('');
+      auth.isSignedOut(state).should.eql(true);
     });
 
     describe('then sign in with google and redirect', () => {
-      before(async () => {
+      beforeEach(async () => {
         await reset({
           actions: [],
           serviceResults: [{
@@ -111,7 +105,7 @@ describe('auth', () => {
       });
 
       it('should sign in with the correct method', () => {
-        service.signInWithGoogleRedirect.should.have.been.calledOnce;
+        authService.signInWithGoogleRedirect.should.have.been.calledOnce;
       });
     });
 
@@ -119,18 +113,16 @@ describe('auth', () => {
       _.forEach({
         'with google': {
           action: auth.signInWithGoogle(),
-          submittedEmail: '',
           checkAuthCall: () => {
-            service.signInWithGoogle.should.have.been.calledOnce;
+            authService.signInWithGoogle.should.have.been.calledOnce;
           },
           shouldVerifyEmail: false,
         },
         'with email and password': {
           action: auth.signInWithEmailAndPassword(email, password),
-          submittedEmail: email,
           checkAuthCall: () => {
-            service.signInWithEmailAndPassword.should.have.been.calledOnce;
-            service.signInWithEmailAndPassword.should.have.been.calledWith(
+            authService.signInWithEmailAndPassword.should.have.been.calledOnce;
+            authService.signInWithEmailAndPassword.should.have.been.calledWith(
               email,
               password,
             );
@@ -139,10 +131,11 @@ describe('auth', () => {
         },
         'creating a user with email and password': {
           action: auth.createUserWithEmailAndPassword(email, password),
-          submittedEmail: email,
           checkAuthCall: () => {
-            service.createUserWithEmailAndPassword.should.have.been.calledOnce;
-            service.createUserWithEmailAndPassword.should.have.been.calledWith(
+            authService.createUserWithEmailAndPassword
+            .should.have.been.calledOnce;
+            authService.createUserWithEmailAndPassword
+            .should.have.been.calledWith(
               email,
               password,
             );
@@ -156,7 +149,6 @@ describe('auth', () => {
               serviceResults: [{
                 error: error,
               }],
-              shouldVerifyEmail: false,
               states: [{
                 error: false,
                 errorText: '',
@@ -165,7 +157,6 @@ describe('auth', () => {
                 signedIn: false,
                 signedOut: false,
                 displayName: '',
-                submittedEmail: signInCase.submittedEmail,
               }, {
                 error: true,
                 errorText: error.toString(),
@@ -174,14 +165,12 @@ describe('auth', () => {
                 signedIn: false,
                 signedOut: true,
                 displayName: '',
-                submittedEmail: signInCase.submittedEmail,
               }],
             },
             'and succeed': {
               serviceResults: [{
                 success: user,
               }],
-              shouldVerifyEmail: signInCase.shouldVerifyEmail,
               states: [{
                 error: false,
                 errorText: '',
@@ -190,7 +179,6 @@ describe('auth', () => {
                 signedIn: false,
                 signedOut: false,
                 displayName: '',
-                submittedEmail: signInCase.submittedEmail,
               }, {
                 error: false,
                 errorText: '',
@@ -199,12 +187,11 @@ describe('auth', () => {
                 signedIn: true,
                 signedOut: false,
                 displayName,
-                submittedEmail: '',
               }],
             },
           }, (resultCase, description) => {
             describe(description, () => {
-              before(async () => {
+              beforeEach(async () => {
                 await reset({
                   actions: [],
                   serviceResults: resultCase.serviceResults,
@@ -212,14 +199,14 @@ describe('auth', () => {
                 await store.dispatch(signInCase.action);
               });
 
+              it('should sign in with the correct method', () => {
+                signInCase.checkAuthCall();
+              });
+
               it('should verify email if necessary', () => {
                 if (resultCase.shouldVerifyEmail) {
                   user.sendEmailVerification.should.have.been.calledOnce;
                 }
-              });
-
-              it('should sign in with the correct method', () => {
-                signInCase.checkAuthCall();
               });
 
               it('should update the state the correct number of times', () => {
@@ -235,7 +222,7 @@ describe('auth', () => {
                 let state;
 
                 describe(`then state ${stateIndex}`, () => {
-                  before(() => {
+                  beforeEach(() => {
                     testState = resultCase.states[stateIndex];
                     state = states[stateIndex];
                   });
@@ -258,7 +245,7 @@ describe('auth', () => {
                     );
                   });
 
-                  it('should have the correct signed in state', () => {
+                  it('shaould have the correct signed in state', () => {
                     auth.isSignedIn(state).should.eql(testState.signedIn);
                   });
 
@@ -271,17 +258,11 @@ describe('auth', () => {
                   it('should have the correct signed out state', () => {
                     auth.isSignedOut(state).should.eql(testState.signedOut);
                   });
-
-                  it('should have the correct submitted email', () => {
-                    auth.getSubmittedEmail(state).should.eql(
-                      testState.submittedEmail,
-                    );
-                  });
                 });
               }
 
               describe('then reset error', () => {
-                before(async () => {
+                beforeEach(async () => {
                   await reset({
                     actions: [
                       signInCase.action,
@@ -314,7 +295,7 @@ describe('auth', () => {
                   },
                 }, (value, key) => {
                   describe(key, () => {
-                    before(async () => {
+                    beforeEach(async () => {
                       await reset({
                         actions: [
                           signInCase.action,
@@ -360,12 +341,8 @@ describe('auth', () => {
                       auth.isSignedOut(states[0]).should.eql(false);
                     });
 
-                    it('should not have a submitted email', () => {
-                      auth.getSubmittedEmail(states[0]).should.eql('');
-                    });
-
                     describe('then sign out', () => {
-                      before(async () => {
+                      beforeEach(async () => {
                         await reset({
                           actions: [
                             signInCase.action,
@@ -379,7 +356,7 @@ describe('auth', () => {
                       });
 
                       it('should have signed out with the service', () => {
-                        service.signOut.should.have.been.calledOnce;
+                        authService.signOut.should.have.been.calledOnce;
                       });
 
                       it('should change the state once', () => {
@@ -398,6 +375,10 @@ describe('auth', () => {
                         auth.isPending(states[0]).should.be.false;
                       });
 
+                      it('should not have email verified', () => {
+                        auth.isEmailVerified(states[0]).should.be.false;
+                      });
+
                       it('should not be signed in', () => {
                         auth.isSignedIn(states[0]).should.eql(false);
                       });
@@ -408,10 +389,6 @@ describe('auth', () => {
 
                       it('should be signed out', () => {
                         auth.isSignedOut(states[0]).should.eql(true);
-                      });
-
-                      it('should not have a submitted email', () => {
-                        auth.getSubmittedEmail(states[0]).should.eql('');
                       });
                     });
                   });

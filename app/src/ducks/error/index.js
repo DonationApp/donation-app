@@ -4,7 +4,7 @@ import {
 import {
   createSelector,
 } from 'reselect';
-import Duck from '../duck';
+import Duck from '../../lib/duck';
 
 const initialState = {};
 const duck = new Duck(

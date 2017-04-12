@@ -1,5 +1,5 @@
-import * as error from '../../../src/error';
-import reducer from '../../../src/error';
+import * as error from '../../../../src/ducks/error';
+import reducer from '../../../../src/ducks/error';
 import {
   createStore,
   combineReducers,

@@ -1,22 +1,21 @@
-import sinon from 'sinon';
 import auth from './auth';
 import {
   helpers as authHelpers,
 } from './auth';
+import firebase from 'firebase';
 
-const initializeApp = sinon.spy();
-
-const firebase = {
-  initializeApp,
-  auth,
-};
+firebase.auth = auth;
 
 export const helpers = {
   auth: authHelpers,
   reset: () => {
-    initializeApp.reset();
     authHelpers.reset();
   },
 };
+
+// Uncomment this back in to enable logging from the
+// firebase client
+//
+// firebase.database.enableLogging(true);
 
 export default firebase;
