@@ -3,9 +3,9 @@ import config from '../config';
 import authService from './ducks/auth/service';
 
 class Service {
-  start(app, store) {
+  start(app) {
     firebase.initializeApp(config);
-    authService.start(app, store);
+    authService.start(app);
   }
 }
 

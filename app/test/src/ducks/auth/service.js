@@ -15,10 +15,6 @@ const error = new Error('FAIL');
 
 const auth = firebase.auth();
 
-const store = {
-  dispatch: sinon.spy(),
-};
-
 const app = {
   auth: {
     setUser: sinon.spy(() => setUserAction),
@@ -27,17 +23,20 @@ const app = {
   error: {
     setError: sinon.spy(() => setErrorAction),
   },
+  store: {
+    dispatch: sinon.spy(),
+  },
 };
 
 describe('authService', () => {
   beforeEach(async () => {
     helpers.reset();
-    store.dispatch.reset();
+    app.store.dispatch.reset();
     // setup the getRedirectResult promise
     helpers.auth.setResults([{
       error,
     }]);
-    await authService.start(app, store);
+    await authService.start(app);
   });
 
   afterEach(() => {
@@ -46,25 +45,25 @@ describe('authService', () => {
 
   it('should dispatch a submit sign in action while we wait', () => {
     app.auth.submitSignIn.should.have.been.calledOnce;
-    store.dispatch.should.have.been.calledWith(submitSignInAction);
+    app.store.dispatch.should.have.been.calledWith(submitSignInAction);
   });
 
   it('should dispatch the error if the redirect result has an error', () => {
     app.error.setError.should.have.been.calledWith(error);
-    store.dispatch.should.have.been.calledWith(setErrorAction);
+    app.store.dispatch.should.have.been.calledWith(setErrorAction);
   });
 
   describe('onAuthStateChanged', () => {
     beforeEach(() => {
       helpers.reset();
-      store.dispatch.reset();
+      app.store.dispatch.reset();
       helpers.auth.changeState(user);
     });
 
     it('should dispatch a setUser action', () => {
       app.auth.setUser.should.have.been.calledWith(user);
-      store.dispatch.should.have.been.calledOnce;
-      store.dispatch.should.have.been.calledWith(setUserAction);
+      app.store.dispatch.should.have.been.calledOnce;
+      app.store.dispatch.should.have.been.calledWith(setUserAction);
     });
   });
 

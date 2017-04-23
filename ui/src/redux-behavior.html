@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
 <link rel="import" href="./app.html">
 <script>
-  ReduxBehavior = PolymerRedux(store);
-  start(app, store);
+  ReduxBehavior = PolymerRedux(app.store);
+  app.start(app, app.store);
 </script>

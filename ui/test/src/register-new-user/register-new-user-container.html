@@ -97,7 +97,7 @@
             });
             app.auth.createUserWithEmailAndPassword
             .should.have.been.calledWith('email', 'password');
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.auth.createUserWithEmailAndPassword.value
             );
           });
@@ -130,7 +130,7 @@
             app.helpers.reset();
             registerNewUserContainer.fire('register-new-user-dismissed');
             app.auth.resetError.should.have.been.calledOnce;
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.auth.resetError.value
             );
           });

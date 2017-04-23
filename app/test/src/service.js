@@ -4,13 +4,12 @@ import config from '../../config';
 import authService from '../../src/ducks/auth/service';
 
 const app = 'app';
-const store = 'store';
 
 describe('service', () => {
   beforeEach(() => {
     sinon.stub(firebase, 'initializeApp');
     sinon.stub(authService, 'start');
-    service.start(app, store);
+    service.start(app);
   });
 
   afterEach(() => {
@@ -27,7 +26,6 @@ describe('service', () => {
     authService.start.should.have.been.calledOnce;
     authService.start.should.have.been.calledWith(
       app,
-      store,
     );
   });
 });

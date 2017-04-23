@@ -1,7 +1,4 @@
 import {
-  isUndefined,
-} from 'lodash';
-import {
   createSelector,
 } from 'reselect';
 import Duck from '../../lib/duck';
@@ -23,7 +20,7 @@ const error = duck.selector((state) => state.error);
 // public selectors
 export const hasError = createSelector(
   error,
-  (error) => !isUndefined(error),
+  (error) => typeof error !== 'undefined',
 );
 
 export const getErrorText = createSelector(

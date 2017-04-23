@@ -33,7 +33,7 @@
             app.helpers.reset();
             signOutContainer.fire('sign-out');
             app.auth.signOut.should.have.been.calledOnce;
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.auth.signOut.value
             );
           });

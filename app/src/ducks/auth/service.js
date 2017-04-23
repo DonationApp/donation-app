@@ -3,10 +3,10 @@ import firebase from 'firebase';
 const CHECK_VERIFIED_INTERVAL = 1000;
 
 class AuthService {
-  start(app, store) {
+  start(app) {
     let checkVerifiedTimeout;
     let currentUser;
-    store.dispatch(app.auth.submitSignIn()),
+    app.store.dispatch(app.auth.submitSignIn()),
     this.auth = firebase.auth();
     this.stop = this.auth.onAuthStateChanged((user) => {
       currentUser = user;
@@ -16,7 +16,7 @@ class AuthService {
         clearTimeout(checkVerifiedTimeout);
       }
 
-      store.dispatch(app.auth.setUser(user));
+      app.store.dispatch(app.auth.setUser(user));
 
       // istanbul ignore next
       if (user && !user.emailVerified) {
@@ -31,7 +31,7 @@ class AuthService {
               startCheckVerifiedTimeout();
             } else {
               if (currentUser === user) {
-                store.dispatch(app.auth.setUser(user));
+                app.store.dispatch(app.auth.setUser(user));
               }
             }
           });
@@ -46,7 +46,7 @@ class AuthService {
       }
     });
     return this.auth.getRedirectResult().catch(
-      (error) => store.dispatch(app.error.setError(error)),
+      (error) => app.store.dispatch(app.error.setError(error)),
     );
   }
 

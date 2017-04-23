@@ -65,7 +65,7 @@
             app.helpers.reset();
             errorContainer.fire('error-dismissed');
             app.error.reset.should.have.been.calledOnce;
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.error.reset.value
             );
           });

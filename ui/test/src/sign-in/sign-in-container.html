@@ -86,7 +86,7 @@
             });
             app.auth.signInWithEmailAndPassword
             .should.have.been.calledWith('email', 'password');
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.auth.signInWithEmailAndPassword.value
             );
           });
@@ -98,7 +98,7 @@
             signInContainer.fire('sign-in-with-google');
             app.auth.signInWithGoogleRedirect
             .should.have.been.calledOnce;
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.auth.signInWithGoogleRedirect.value
             );
           });
@@ -131,7 +131,7 @@
             app.helpers.reset();
             signInContainer.fire('sign-in-dismissed');
             app.auth.resetError.should.have.been.calledOnce;
-            store.dispatch.should.have.been.calledWith(
+            app.store.dispatch.should.have.been.calledWith(
               app.auth.resetError.value
             );
           });

@@ -13,7 +13,7 @@
     <script>
       describe('ReduxBehavior', function() {
         it('should start the app', function() {
-          start.should.have.been.calledWith(app, store);
+          app.start.should.have.been.calledWith(app);
         });
 
         it('should be attached to the global scope', function() {

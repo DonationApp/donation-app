@@ -5,36 +5,49 @@
 
 Manage donations to charities
 
-## npm scripts
+## Development setup
+
+The following npm tasks will be useful during development
 
 - `npm test` - test the Javascript and Polymer source (will build the Javascript bundle before running Polymer tests)
 - `npm run build` - run tests then build the Polymer app
 - `npm run deploy` - deploy to Firebase app instance (does not build first, this should be done separately)
-- `npm start` - runs `polymer serve` and watches for changes to run tests
-- `npm run coveralls` - submits coverage data to coveralls (currently coverage data is only collected for the Javascript bundle)
+- `npm start` - starts servers and watches for changes to run tests
+- `npm run wct:start` - runs UI tests in persistent mode so that the browser stays open for debugging
 
-After cloning add your local config to the config directory
+You will need to create your own development Firebase instance at https://console.firebase.google.com/. This will be used by your local server during development so that you can preview functionality.
+
+Once created you will need to manually enable the following authentication methods (it is currently not possible to script/automate this).
+
+- Email/Password
+- Google
+
+After cloning add your local config with the config directory
 
 ```
 cp -r config/production.json config/local.json
 ```
 
-Then update the `config/local.json` to your development Firebase settings
+Then update the `config/local.json` to your development Firebase settings.
 
-Before starting the server run the following to install bower dependencies, create config files, run tests, build etc
+Before starting the server run the following at least once to install bower dependencies, create config files, run tests, build etc.
 
 ```
 npm install
 npm run build
 ```
 
-To update the database rules on your development server
+After pulling, it is advisable to rerun these commands to update dependencies that may have changed upstream (if you have any odd experiences doing this then the solution may be to delete the `node_modules` and `bower_components` folders first)
+
+To upload the built app to your development server
 
 ```
 npm run deploy
 ```
 
-During development it is recommended to run the following command to watch for changes and continually test (on Windows this needs to be run in PowerShell)
+This will need to be run so that at least the current database and storage rules, etc have been uploaded even if you only intend to serve the app locally. It should also be run after pulling new versions from upstream.
+
+During development it is recommended to run the following command to watch for changes and continually test (on Windows this needs to be run in PowerShell).
 
 ```
 npm start

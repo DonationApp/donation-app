@@ -1,8 +1,5 @@
 import authService from './service';
 import {
-  isUndefined,
-} from 'lodash';
-import {
   createSelector,
 } from 'reselect';
 import Duck from '../../lib/duck';
@@ -26,7 +23,7 @@ const user = duck.selector((state) => state.user);
 // public selectors
 export const hasError = createSelector(
   error,
-  (error) => !isUndefined(error),
+  (error) => typeof error !== 'undefined',
 );
 
 export const getErrorText = createSelector(
@@ -37,12 +34,12 @@ export const getErrorText = createSelector(
 
 export const isPending = createSelector(
   pending,
-  (pending) => !isUndefined(pending),
+  (pending) => typeof pending !== 'undefined',
 );
 
 export const isSignedIn = createSelector(
   user,
-  (user) => !isUndefined(user) && user !== null,
+  (user) => typeof user !== 'undefined' && user !== null,
 );
 
 export const getDisplayName = createSelector(
