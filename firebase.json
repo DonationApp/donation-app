@@ -6,7 +6,7 @@
     "rules": "./rules/storage.rules"
   },
   "hosting": {
-    "public": "./build/unbundled",
+    "public": "./build/default",
     "rewrites": [{
       "source": "**",
       "destination": "/index.html"
