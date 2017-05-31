@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
@@ -14,37 +14,51 @@
     </paper-dialog>
   </template>
   <script>
-    Polymer({
-      is: 'error-view',
-      behaviors: [
-        Polymer.AppLocalizeBehavior,
-      ],
-      attached: function() {
+    class ErrorView extends Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior],
+      Polymer.Element
+    ) {
+      static get is() {
+        return 'error-view';
+      }
+
+      static get properties() {
+        return {
+          language: {
+            type: String,
+            value: 'en',
+          },
+          hasError: {
+            type: Boolean,
+            value: false,
+            observer: '_hasErrorChange',
+          },
+          errorText: {
+            type: String,
+            value: false,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
         this.loadResources(this.resolveUrl('../../../locales.json'));
-      },
-      properties: {
-        language: {
-          type: String,
-          value: 'en',
-        },
-        hasError: {
-          type: Boolean,
-          value: false,
-          observer: '_hasErrorChange',
-        },
-        errorText: {
-          type: String,
-          value: false,
-        },
-      },
-      _hasErrorChange: function(hasError) {
+      }
+
+      _hasErrorChange(hasError) {
         if (hasError) {
           this.$.dialog.open();
         }
-      },
-      _closed: function() {
-        this.fire('error-dismissed');
-      },
-    });
+      }
+
+      _closed() {
+        this.dispatchEvent(new CustomEvent('error-dismissed', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+    }
+
+    window.customElements.define(ErrorView.is, ErrorView);
   </script>
 </dom-module>

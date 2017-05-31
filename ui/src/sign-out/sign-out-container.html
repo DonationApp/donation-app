@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./sign-out-view.html">
 
 <dom-module id="sign-out-container">
@@ -10,25 +10,33 @@
     </sign-out-view>
   </template>
   <script>
-    Polymer({
-      is: 'sign-out-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-      },
-      listeners: {
-        'sign-out': '_signOut',
-      },
-      actions: {
-        signOut: app.auth.signOut,
-      },
-      _signOut: function() {
+    class SignOutContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'sign-out-container';
+      }
+
+      static get actions() {
+        return {
+          signOut: app.auth.signOut,
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('sign-out', (e) => this._signOut(e));
+      }
+
+      _signOut() {
         return this.dispatch(
           'signOut'
         );
-      },
-      show: function() {
+      }
+
+      show() {
         this.$.view.show();
-      },
-    });
+      }
+    }
+
+    window.customElements.define(SignOutContainer.is, SignOutContainer);
   </script>
 </dom-module>

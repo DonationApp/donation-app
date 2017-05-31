@@ -1,18 +1,25 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <dom-module id="recurring-view">
   <template>
     <div>RECURRING</div>
   </template>
   <script>
-    Polymer({
-      is: 'recurring-view',
-      properties: {
-        isSignedIn: {
-          type: Boolean,
-          value: false,
-        },
-      },
-    });
+    class RecurringView extends Polymer.Element {
+      static get is() {
+        return 'recurring-view';
+      }
+
+      static get properties() {
+        return {
+          isSignedIn: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(RecurringView.is, RecurringView);
   </script>
 </dom-module>

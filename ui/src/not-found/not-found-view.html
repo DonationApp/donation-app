@@ -1,12 +1,16 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <dom-module id="not-found-view">
   <template>
     <div>NOT FOUND</div>
   </template>
   <script>
-    Polymer({
-      is: 'not-found-view',
-    });
+    class NotFoundView extends Polymer.Element {
+      static get is() {
+        return 'not-found-view';
+      }
+    }
+
+    window.customElements.define(NotFoundView.is, NotFoundView);
   </script>
 </dom-module>

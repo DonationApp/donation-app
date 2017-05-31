@@ -16,24 +16,31 @@
       </template>
     </test-fixture>
     <script>
+      /* global SignInView */
+
       var signInView;
 
       describe('sign-in-view', function() {
         beforeEach(function(done) {
           signInView = fixture('default attributes');
           const stringsLoaded = function() {
-            signInView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            signInView.removeEventListener(
+              'app-localize-resources-loaded',
+              stringsLoaded
+            );
             done();
           };
           signInView.addEventListener('app-localize-resources-loaded', stringsLoaded);
         });
 
         it('should instantiate', function() {
-          signInView.is.should.eql('sign-in-view');
+          signInView.should.be.an.instanceOf(SignInView);
         });
 
         it('should have a cancel button', function() {
-          signInView.$.cancel.textContent.should.eql(signInView.localize('cancel-button'));
+          signInView.$.cancel.textContent.should.eql(
+            signInView.localize('cancel-button')
+          );
         });
 
         describe('when there is an error', function() {
@@ -62,7 +69,9 @@
           });
 
           it('should change the cancel button to dismiss', function() {
-            signInView.$.cancel.textContent.should.eql(signInView.localize('dismiss-button'));
+            signInView.$.cancel.textContent.should.eql(
+              signInView.localize('dismiss-button')
+            );
           });
 
           it('should disable the sign in button', function() {
@@ -83,6 +92,8 @@
             signInView.$.email.value = 'email';
             signInView.$.password.value = 'password';
             signInView.addEventListener('sign-in', function(event) {
+              event.bubbles.should.be.true;
+              event.composed.should.be.true;
               event.detail.should.eql({
                 email: 'email',
                 password: 'password',
@@ -97,7 +108,9 @@
           it('should fire a sign-in-with-gooogle event', function(done) {
             signInView.$.email.value = 'email';
             signInView.$.password.value = 'password';
-            signInView.addEventListener('sign-in-with-google', function() {
+            signInView.addEventListener('sign-in-with-google', function(event) {
+              event.bubbles.should.be.true;
+              event.composed.should.be.true;
               done();
             });
             signInView.$.signInWithGoogle.click();
@@ -145,6 +158,8 @@
             });
 
             it('should fire a show-register-new-user event', function() {
+              event.bubbles.should.be.true;
+              event.composed.should.be.true;
               event.detail.email.should.eql('email');
               event.detail.password.should.eql('password');
             });
@@ -155,10 +170,13 @@
           });
 
           describe('and when the dialog is closed', function() {
+            // eslint-disable-next-line max-len
             it('should fire a sign-in-dismissed event and clear the email and password fields', function(done) {
               signInView.$.email.value = 'email';
               signInView.$.password.value = 'password';
-              signInView.addEventListener('sign-in-dismissed', function() {
+              signInView.addEventListener('sign-in-dismissed', function(event) {
+                event.bubbles.should.be.true;
+                event.composed.should.be.true;
                 signInView.$.email.value.should.eql('');
                 signInView.$.password.value.should.eql('');
                 done();

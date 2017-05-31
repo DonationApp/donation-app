@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
@@ -20,79 +20,109 @@
     </paper-dialog>
   </template>
   <script>
-    Polymer({
-      is: 'sign-in-view',
-      behaviors: [
-        Polymer.AppLocalizeBehavior,
-      ],
-      attached: function() {
+    class SignInView extends Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior],
+      Polymer.Element
+    ) {
+      static get is() {
+        return 'sign-in-view';
+      }
+
+      static get properties() {
+        return {
+          language: {
+            type: String,
+            value: 'en',
+          },
+          hasError: {
+            type: Boolean,
+            value: false,
+          },
+          errorText: {
+            type: String,
+            value: '',
+          },
+          isSignedIn: {
+            type: Boolean,
+            value: false,
+            observer: '_isSignedInChange',
+          },
+          isSignedOut: {
+            type: Boolean,
+            value: true,
+          },
+          isPending: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
         this.loadResources(this.resolveUrl('../../../locales.json'));
-      },
-      properties: {
-        language: {
-          type: String,
-          value: 'en',
-        },
-        hasError: {
-          type: Boolean,
-          value: false,
-        },
-        errorText: {
-          type: String,
-          value: '',
-        },
-        isSignedIn: {
-          type: Boolean,
-          value: false,
-          observer: '_isSignedInChange',
-        },
-        isSignedOut: {
-          type: Boolean,
-          value: true,
-        },
-        isPending: {
-          type: Boolean,
-          value: false,
-        },
-      },
-      _getCancelButtonText: function(localize, isPending) {
+      }
+
+      _getCancelButtonText(localize, isPending) {
         return isPending ? localize('dismiss-button') : localize('cancel-button');
-      },
-      _signIn: function() {
+      }
+
+      _signIn() {
         var email = this.$.email.value;
         var password = this.$.password.value;
-        this.fire('sign-in', {
-          email: email,
-          password: password,
-        });
-      },
-      _signInWithGoogle: function() {
-        this.fire('sign-in-with-google');
-      },
-      _register: function() {
+        this.dispatchEvent(new CustomEvent('sign-in', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            email: email,
+            password: password,
+          },
+        }));
+      }
+
+      _signInWithGoogle() {
+        this.dispatchEvent(new CustomEvent('sign-in-with-google', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      _register() {
         var email = this.$.email.value;
         var password = this.$.password.value;
         this.$.dialog.close();
-        this.fire('show-register-new-user', {
-          email: email,
-          password: password,
-        });
-      },
-      _isSignedInChange: function(isSignedIn) {
+        this.dispatchEvent(new CustomEvent('show-register-new-user', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            email: email,
+            password: password,
+          },
+        }));
+      }
+
+      _isSignedInChange(isSignedIn) {
         if (isSignedIn) {
           this.$.dialog.close();
         }
-      },
-      _closed: function() {
+      }
+
+      _closed() {
         this.$.email.value = '';
         this.$.password.value = '';
-        this.fire('sign-in-dismissed');
-      },
-      show: function(params) {
+        this.dispatchEvent(new CustomEvent('sign-in-dismissed', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      show(params) {
         this.$.email.value = params.email;
         this.$.password.value = params.password;
         this.$.dialog.open();
-      },
-    });
+      }
+    }
+
+    window.customElements.define(SignInView.is, SignInView);
   </script>
 </dom-module>

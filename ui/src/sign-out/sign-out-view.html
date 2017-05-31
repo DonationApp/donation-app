@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
@@ -14,26 +14,40 @@
     </paper-dialog>
   </template>
   <script>
-    Polymer({
-      is: 'sign-out-view',
-      behaviors: [
-        Polymer.AppLocalizeBehavior,
-      ],
-      attached: function() {
+    class SignOutView extends Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior],
+      Polymer.Element
+    ) {
+      static get is() {
+        return 'sign-out-view';
+      }
+
+      static get properties() {
+        return {
+          language: {
+            type: String,
+            value: 'en',
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
         this.loadResources(this.resolveUrl('../../../locales.json'));
-      },
-      properties: {
-        language: {
-          type: String,
-          value: 'en',
-        },
-      },
-      _signOut: function() {
-        this.fire('sign-out');
-      },
-      show: function() {
+      }
+
+      _signOut() {
+        this.dispatchEvent(new CustomEvent('sign-out', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      show() {
         this.$.dialog.open();
-      },
-    });
+      }
+    }
+
+    window.customElements.define(SignOutView.is, SignOutView);
   </script>
 </dom-module>

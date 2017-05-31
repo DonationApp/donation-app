@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global DonateView */
+
       var donateView;
 
       describe('donate-view', function() {
@@ -24,7 +26,7 @@
         });
 
         it('should instantiate', function() {
-          donateView.is.should.eql('donate-view');
+          donateView.should.be.an.instanceOf(DonateView);
         });
       });
     </script>

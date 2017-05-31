@@ -1,14 +1,16 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <dom-module id="profile-page">
   <template>
     <div>PROFILE</div>
   </template>
   <script>
-    Polymer({
-      is: 'profile-page',
-      properties: {
-      },
-    });
+    class ProfilePage extends Polymer.Element {
+      static get is() {
+        return 'profile-page';
+      }
+    }
+
+    window.customElements.define(ProfilePage.is, ProfilePage);
   </script>
 </dom-module>

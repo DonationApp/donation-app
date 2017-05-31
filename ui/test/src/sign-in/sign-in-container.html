@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global SignInContainer, SignInView */
+
       var signInContainer;
 
       describe('sign-in-container', function() {
@@ -24,8 +26,12 @@
           signInContainer = fixture('default attributes');
         });
 
+        it('should instantiate', function() {
+          signInContainer.should.be.an.instanceOf(SignInContainer);
+        });
+
         it('should contain a sign-in view', function() {
-          signInContainer.$.view.is.should.eql('sign-in-view');
+          signInContainer.$.view.should.be.an.instanceOf(SignInView);
         });
 
         describe('when there is an error', function() {
@@ -80,10 +86,14 @@
         describe('on sign-in event', function() {
           it('should dispatch a signInWithEmailAndPassword action', function() {
             app.helpers.reset();
-            signInContainer.fire('sign-in', {
-              email: 'email',
-              password: 'password',
-            });
+            signInContainer.$.view.dispatchEvent(new CustomEvent('sign-in', {
+              bubbles: true,
+              composed: true,
+              detail: {
+                email: 'email',
+                password: 'password',
+              },
+            }));
             app.auth.signInWithEmailAndPassword
             .should.have.been.calledWith('email', 'password');
             app.store.dispatch.should.have.been.calledWith(
@@ -95,7 +105,12 @@
         describe('on sign-in-with-google event', function() {
           it('should dispatch a signInWithGoogle action', function() {
             app.helpers.reset();
-            signInContainer.fire('sign-in-with-google');
+            signInContainer.$.view.dispatchEvent(
+              new CustomEvent('sign-in-with-google', {
+                bubbles: true,
+                composed: true,
+              })
+            );
             app.auth.signInWithGoogleRedirect
             .should.have.been.calledOnce;
             app.store.dispatch.should.have.been.calledWith(
@@ -129,7 +144,12 @@
         describe('when a sign-in-dismissed event is received', function() {
           it('should dispatch a resetError action', function() {
             app.helpers.reset();
-            signInContainer.fire('sign-in-dismissed');
+            signInContainer.$.view.dispatchEvent(
+              new CustomEvent('sign-in-dismissed', {
+                bubbles: true,
+                composed: true,
+              })
+            );
             app.auth.resetError.should.have.been.calledOnce;
             app.store.dispatch.should.have.been.calledWith(
               app.auth.resetError.value

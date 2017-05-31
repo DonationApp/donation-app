@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./error-view.html">
 
 <dom-module id="error-container">
@@ -12,28 +12,40 @@
     </error-view>
   </template>
   <script>
-    Polymer({
-      is: 'error-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-        hasError: {
-          type: Boolean,
-          statePath: app.error.hasError,
-        },
-        errorText: {
-          type: String,
-          statePath: app.error.getErrorText,
-        },
-      },
-      actions: {
-        reset: app.error.reset,
-      },
-      listeners: {
-        'error-dismissed': '_errorDismissed',
-      },
-      _errorDismissed: function() {
+    class ErrorContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'error-container';
+      }
+
+      static get properties() {
+        return {
+          hasError: {
+            type: Boolean,
+            statePath: app.error.hasError,
+          },
+          errorText: {
+            type: String,
+            statePath: app.error.getErrorText,
+          },
+        };
+      }
+
+      static get actions() {
+        return {
+          reset: app.error.reset,
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('error-dismissed', (e) => this._errorDismissed(e));
+      }
+
+      _errorDismissed() {
         this.dispatch('reset');
-      },
-    });
+      }
+    }
+
+    window.customElements.define(ErrorContainer.is, ErrorContainer);
   </script>
 </dom-module>

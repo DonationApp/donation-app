@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global RegisterNewUserContainer, RegisterNewUserView */
+
       var registerNewUserContainer;
 
       describe('register-new-user-container', function() {
@@ -24,8 +26,14 @@
           registerNewUserContainer = fixture('default attributes');
         });
 
+        it('should instantiate', function() {
+          registerNewUserContainer.should.be.an.instanceOf(RegisterNewUserContainer);
+        });
+
         it('should contain a register-new-user view', function() {
-          registerNewUserContainer.$.view.is.should.eql('register-new-user-view');
+          registerNewUserContainer.$.view.should.be.an.instanceOf(
+            RegisterNewUserView
+          );
         });
 
         describe('when there is an error', function() {
@@ -83,7 +91,7 @@
             app.helpers.notifyStateChange();
           });
 
-          it('should set the isEmailVerified attribute of the view to true', function() {
+          it('should set the isEmailVerified attribute to true', function() {
             registerNewUserContainer.$.view.isEmailVerified.should.be.true;
           });
         });
@@ -91,10 +99,16 @@
         describe('on register-new-user event', function() {
           it('should dispatch a register action', function() {
             app.helpers.reset();
-            registerNewUserContainer.fire('register-new-user', {
-              email: 'email',
-              password: 'password',
-            });
+            registerNewUserContainer.$.view.dispatchEvent(
+              new CustomEvent('register-new-user', {
+                bubbles: true,
+                composed: true,
+                detail: {
+                  email: 'email',
+                  password: 'password',
+                },
+              })
+            );
             app.auth.createUserWithEmailAndPassword
             .should.have.been.calledWith('email', 'password');
             app.store.dispatch.should.have.been.calledWith(
@@ -128,7 +142,12 @@
         describe('when a register-new-user-dismissed event is received', function() {
           it('should dispatch a resetError action', function() {
             app.helpers.reset();
-            registerNewUserContainer.fire('register-new-user-dismissed');
+            registerNewUserContainer.$.view.dispatchEvent(
+              new CustomEvent('register-new-user-dismissed', {
+                bubbles: true,
+                composed: true,
+              })
+            );
             app.auth.resetError.should.have.been.calledOnce;
             app.store.dispatch.should.have.been.calledWith(
               app.auth.resetError.value

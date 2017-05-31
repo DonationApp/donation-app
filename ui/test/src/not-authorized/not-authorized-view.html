@@ -16,24 +16,34 @@
       </template>
     </test-fixture>
     <script>
+      /* global NotAuthorizedView */
+
       var notAuthorizedView;
 
       describe('not-authorized-view', function() {
         beforeEach(function(done) {
           notAuthorizedView = fixture('default attributes');
           const stringsLoaded = function() {
-            notAuthorizedView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            notAuthorizedView.removeEventListener(
+              'app-localize-resources-loaded',
+              stringsLoaded
+            );
             done();
           };
-          notAuthorizedView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+          notAuthorizedView.addEventListener(
+            'app-localize-resources-loaded',
+            stringsLoaded
+          );
         });
 
         it('should instantiate', function() {
-          notAuthorizedView.is.should.eql('not-authorized-view');
+          notAuthorizedView.should.be.an.instanceOf(NotAuthorizedView);
         });
 
         it('should set the message', function() {
-          notAuthorizedView.$.message.textContent.should.eql(notAuthorizedView.localize('profile-not-authorized-message'));
+          notAuthorizedView.$.message.textContent.should.eql(
+            notAuthorizedView.localize('profile-not-authorized-message')
+          );
         });
       });
     </script>

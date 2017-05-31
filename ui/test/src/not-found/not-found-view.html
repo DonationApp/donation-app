@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global NotFoundView */
+
       var notFoundView;
 
       describe('not-found-view', function() {
@@ -24,7 +26,7 @@
         });
 
         it('should instantiate', function() {
-          notFoundView.is.should.eql('not-found-view');
+          notFoundView.should.be.an.instanceOf(NotFoundView);
         });
       });
     </script>

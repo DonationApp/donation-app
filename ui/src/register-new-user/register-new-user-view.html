@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
@@ -27,58 +27,67 @@
     </paper-dialog>
   </template>
   <script>
-    Polymer({
-      is: 'register-new-user-view',
-      behaviors: [
-        Polymer.AppLocalizeBehavior,
-      ],
-      attached: function() {
+    class RegisterNewUserView extends Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior],
+      Polymer.Element
+    ) {
+      static get is() {
+        return 'register-new-user-view';
+      }
+
+      static get properties() {
+        return {
+          language: {
+            type: String,
+            value: 'en',
+          },
+          password: {
+            type: String,
+            observer: '_validatePassword',
+          },
+          confirmPassword: {
+            type: String,
+            observer: '_validatePassword',
+          },
+          hasError: {
+            type: Boolean,
+            value: false,
+          },
+          errorText: {
+            type: String,
+            value: '',
+          },
+          isSignedIn: {
+            type: Boolean,
+            value: false,
+            observer: '_isSignedInChange',
+          },
+          isEmailVerified: {
+            type: Boolean,
+            value: false,
+            observer: '_isEmailVerifiedChange',
+          },
+          isSignedOut: {
+            type: Boolean,
+            value: true,
+          },
+          isPending: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
         this.loadResources(this.resolveUrl('../../../locales.json'));
-      },
-      properties: {
-        language: {
-          type: String,
-          value: 'en',
-        },
-        password: {
-          type: String,
-          observer: '_validatePassword',
-        },
-        confirmPassword: {
-          type: String,
-          observer: '_validatePassword',
-        },
-        hasError: {
-          type: Boolean,
-          value: false,
-        },
-        errorText: {
-          type: String,
-          value: '',
-        },
-        isSignedIn: {
-          type: Boolean,
-          value: false,
-          observer: '_isSignedInChange',
-        },
-        isEmailVerified: {
-          type: Boolean,
-          value: false,
-          observer: '_isEmailVerifiedChange',
-        },
-        isSignedOut: {
-          type: Boolean,
-          value: true,
-        },
-        isPending: {
-          type: Boolean,
-          value: false,
-        },
-      },
-      _validatePassword: function() {
+      }
+
+      _validatePassword() {
         this.$.confirmPassword.invalid = (this.password !== this.confirmPassword);
-      },
-      _isRegisterDisabled: function(isPending, password, confirmPassword) {
+      }
+
+      _isRegisterDisabled(isPending, password, confirmPassword) {
         if (isPending) {
           return true;
         }
@@ -86,53 +95,77 @@
           return true;
         }
         return false;
-      },
-      _getCancelButtonText: function(localize, isPending) {
+      }
+
+      _getCancelButtonText(localize, isPending) {
         return isPending ? localize('dismiss-button') : localize('cancel-button');
-      },
-      _register: function() {
+      }
+
+      _register() {
         var email = this.$.email.value;
         var password = this.$.password.value;
-        this.fire('register-new-user', {
-          email: email,
-          password: password,
-        });
-      },
-      _signInWithGoogle: function() {
-        this.fire('register-new-user-with-google');
-      },
-      _signIn: function() {
+        this.dispatchEvent(new CustomEvent('register-new-user', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            email: email,
+            password: password,
+          },
+        }));
+      }
+
+      _signInWithGoogle() {
+        this.dispatchEvent(new CustomEvent('register-new-user-with-google', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      _signIn() {
         var email = this.$.email.value;
         var password = this.$.password.value;
         this.$.dialog.close();
-        this.fire('show-sign-in', {
-          email: email,
-          password: password,
-        });
-      },
-      _isSignedInChange: function(isSignedIn) {
+        this.dispatchEvent(new CustomEvent('show-sign-in', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            email: email,
+            password: password,
+          },
+        }));
+      }
+
+      _isSignedInChange(isSignedIn) {
         if (isSignedIn) {
           this.$.dialog.close();
           this.$.verificationDialog.open();
         }
-      },
-      _isEmailVerifiedChange: function(isEmailVerified) {
+      }
+
+      _isEmailVerifiedChange(isEmailVerified) {
         if (isEmailVerified) {
           this.$.verificationDialog.close();
         }
-      },
-      _closed: function() {
+      }
+
+      _closed() {
         this.$.email.value = '';
         this.$.password.value = '';
         this.$.confirmPassword.value = '';
-        this.fire('register-new-user-dismissed');
-      },
-      show: function(params) {
+        this.dispatchEvent(new CustomEvent('register-new-user-dismissed', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      show(params) {
         this.$.email.value = params.email;
         this.$.password.value = params.password;
         this.$.confirmPassword.value = '';
         this.$.dialog.open();
-      },
-    });
+      }
+    }
+
+    window.customElements.define(RegisterNewUserView.is, RegisterNewUserView);
   </script>
 </dom-module>

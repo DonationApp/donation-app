@@ -16,20 +16,28 @@
       </template>
     </test-fixture>
     <script>
+      /* global SignOutView */
+
       var signOutView;
 
       describe('sign-out-view', function() {
         beforeEach(function(done) {
           signOutView = fixture('default attributes');
           const stringsLoaded = function() {
-            signOutView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            signOutView.removeEventListener(
+              'app-localize-resources-loaded',
+              stringsLoaded
+            );
             done();
           };
-          signOutView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+          signOutView.addEventListener(
+            'app-localize-resources-loaded',
+            stringsLoaded
+          );
         });
 
         it('should instantiate', function() {
-          signOutView.is.should.eql('sign-out-view');
+          signOutView.should.be.an.instanceOf(SignOutView);
         });
 
         it('should initially be closed', function() {
@@ -38,7 +46,9 @@
 
         describe('when the sign out button is clicked', function() {
           it('should fire a sign-out event', function(done) {
-            signOutView.addEventListener('sign-out', function() {
+            signOutView.addEventListener('sign-out', function(event) {
+              event.bubbles.should.be.true;
+              event.composed.should.be.true;
               done();
             });
             signOutView.$.signOut.click();

@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./recurring-view.html">
 
 <dom-module id="recurring-container">
@@ -11,17 +11,21 @@
     </recurring-view>
   </template>
   <script>
-    Polymer({
-      is: 'recurring-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-        isSignedIn: {
-          type: Boolean,
-          statePath: app.auth.isSignedIn,
-        },
-      },
-      actions: {
-      },
-    });
+    class RecurringContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'recurring-container';
+      }
+
+      static get properties() {
+        return {
+          isSignedIn: {
+            type: Boolean,
+            statePath: app.auth.isSignedIn,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(RecurringContainer.is, RecurringContainer);
   </script>
 </dom-module>

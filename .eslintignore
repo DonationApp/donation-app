@@ -1,2 +1,6 @@
-/ui/app/
+/build/
 /app/coverage/
+/ui/app/
+/ui/coverage/
+/node_modules/
+/bower_components/

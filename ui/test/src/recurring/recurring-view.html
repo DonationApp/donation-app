@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global RecurringView */
+
       var recurringView;
 
       describe('recurring-view', function() {
@@ -24,7 +26,7 @@
         });
 
         it('should instantiate', function() {
-          recurringView.is.should.eql('recurring-view');
+          recurringView.should.be.an.instanceOf(RecurringView);
         });
       });
     </script>

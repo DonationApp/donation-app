@@ -16,55 +16,92 @@
       </template>
     </test-fixture>
     <script>
+      /*
+        global
+
+        UiRoot,
+        ErrorContainer,
+        DonateContainer,
+        ProfileContainer,
+        RecurringContainer,
+        NotFoundView
+      */
+
       var uiRoot;
+
+      // helper functions for use with dynamic elements
+      // that cannot be selected with $
+      function select(parent, id) {
+        return parent.shadowRoot.querySelector('#' + id);
+      }
+      function checkDomIf(parent, id, display) {
+        var element = select(parent, id);
+        if (display) {
+          if (!element) {
+            throw new Error(id + ': element not present');
+          }
+          if (element.style.display !== '') {
+            throw new Error(id + ': element not displayed');
+          }
+        } else {
+          if (element && element.style.display !== 'none') {
+            throw new Error(id + ': element should not be displayed');
+          }
+        }
+      }
 
       describe('ui-root', function() {
         beforeEach(function(done) {
           app.helpers.reset();
           uiRoot = fixture('default attributes');
           const stringsLoaded = function() {
-            uiRoot.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            uiRoot.removeEventListener(
+              'app-localize-resources-loaded',
+              stringsLoaded
+            );
             done();
           };
           uiRoot.addEventListener('app-localize-resources-loaded', stringsLoaded);
         });
 
+        it('should instantiate', function() {
+          uiRoot.should.be.an.instanceOf(UiRoot);
+        });
+
         it('should have an error container to report errors', function() {
-          uiRoot.$.error.is.should.eql('error-container');
+          uiRoot.$.error.should.be.an.instanceOf(ErrorContainer);
         });
 
         [{
           description: 'when sign in is pending',
           selector: 'isPending',
           emailVerified: false,
-          signInIcon: 'undefined',
-          signOutIcon: 'undefined',
-          pendingIcon: 'ok',
+          signInIcon: false,
+          signOutIcon: false,
+          pendingIcon: true,
         }, {
           description: 'when signed in but email not verified',
           selector: 'isSignedIn',
           emailVerified: false,
-          signInIcon: 'undefined',
-          signOutIcon: 'ok',
-          pendingIcon: 'undefined',
+          signInIcon: false,
+          signOutIcon: true,
+          pendingIcon: false,
         }, {
           description: 'when signed in',
           selector: 'isSignedIn',
           emailVerified: true,
-          signInIcon: 'undefined',
-          signOutIcon: 'ok',
-          pendingIcon: 'undefined',
+          signInIcon: false,
+          signOutIcon: true,
+          pendingIcon: false,
         }, {
           description: 'when signed out',
           selector: 'isSignedOut',
           emailVerified: false,
-          signInIcon: 'ok',
-          signOutIcon: 'undefined',
-          pendingIcon: 'undefined',
+          signInIcon: true,
+          signOutIcon: false,
+          pendingIcon: false,
         }].forEach(function(signInCase) {
-          // These tests for dom-if elements are not working but the
-          // functionality is :s
-          describe.skip(signInCase.description, function() {
+          describe(signInCase.description, function() {
             beforeEach(function(done) {
               app.auth[signInCase.selector].value = true;
               app.auth.isEmailVerified.value = signInCase.emailVerified;
@@ -73,58 +110,68 @@
             });
 
             it('should set the visibility of the pending icon', function() {
-              expect(uiRoot.$.pending).to.be[signInCase.pendingIcon];
+              checkDomIf(uiRoot, 'pending', signInCase.pendingIcon);
             });
 
             it('should set the color of the sign in icon', function() {
               if (signInCase.signInIcon === 'ok') {
-                uiRoot.$.signIn.class.should.equal(signInCase.emailVerified ? '' : 'red');
+                select(uiRoot, 'signIn').class.should.equal(
+                  signInCase.emailVerified ? '' : 'red'
+                );
               }
             });
 
             it('should set the visibility of the sign in icon', function() {
-              expect(uiRoot.$.signIn).to.be[signInCase.signInIcon];
+              checkDomIf(uiRoot, 'signIn', signInCase.signInIcon);
             });
 
             it('should set the visibility of the sign out icon', function() {
-              expect(uiRoot.$.signOut).to.be[signInCase.signOutIcon];
+              checkDomIf(uiRoot, 'signOut', signInCase.signOutIcon);
             });
           });
         });
 
-        // These tests for dom-if elements are not working but the
-        // functionality is :s
-        describe.skip('when the sign out button is clicked', function() {
+        describe('when the sign out button is clicked', function() {
+          beforeEach(function(done) {
+            app.auth.isSignedIn.value = true;
+            app.helpers.notifyStateChange();
+            flush(done);
+          });
+
           it('should fire a show-sign-out event', function(done) {
             uiRoot.addEventListener('show-sign-out', function() {
               done();
             });
-            uiRoot.$.signOut.click();
+            select(uiRoot, 'signOut').click();
           });
         });
 
-        // These tests for dom-if elements are not working but the
-        // functionality is :s
-        describe.skip('when the sign in button is clicked', function() {
+        describe('when the sign in button is clicked', function() {
+          beforeEach(function(done) {
+            app.auth.isSignedOut.value = true;
+            app.helpers.notifyStateChange();
+            flush(done);
+          });
+
           it('should fire a show-sign-in event', function(done) {
             uiRoot.addEventListener('show-sign-in', function(e) {
-              e.detail.email.should.be.undefined;
-              e.detail.password.should.be.undefined;
+              e.detail.email.should.eql('');
+              e.detail.password.should.eql('');
               done();
             });
-            uiRoot.$.signIn.click();
+            select(uiRoot, 'signIn').click();
           });
         });
 
         describe('when a show-sign-out event is received', function() {
           beforeEach(function() {
             sinon.stub(uiRoot.$.signOutContainer, 'show');
-            uiRoot.fire('show-sign-out');
+            uiRoot.dispatchEvent(new CustomEvent('show-sign-out'));
           });
 
           afterEach(function() {
             uiRoot.$.signOutContainer.show.restore();
-          })
+          });
 
           it('should show the sign-out container', function() {
             uiRoot.$.signOutContainer.show.should.have.been.calledOnce;
@@ -134,15 +181,17 @@
         describe('when a show-sign-in event is received', function() {
           beforeEach(function() {
             sinon.stub(uiRoot.$.signInContainer, 'show');
-            uiRoot.fire('show-sign-in', {
-              email: 'email',
-              password: 'password',
-            });
+            uiRoot.dispatchEvent(new CustomEvent('show-sign-in', {
+              detail: {
+                email: 'email',
+                password: 'password',
+              },
+            }));
           });
 
           afterEach(function() {
             uiRoot.$.signInContainer.show.restore();
-          })
+          });
 
           it('should show the sign-in container', function() {
             uiRoot.$.signInContainer.show.should.have.been.calledOnce;
@@ -150,21 +199,23 @@
               email: 'email',
               password: 'password',
             });
-          })
+          });
         });
 
         describe('when a show-register-new-user event is received', function() {
           beforeEach(function() {
             sinon.stub(uiRoot.$.registerNewUserContainer, 'show');
-            uiRoot.fire('show-register-new-user', {
-              email: 'email',
-              password: 'password',
-            });
+            uiRoot.dispatchEvent(new CustomEvent('show-register-new-user', {
+              detail: {
+                email: 'email',
+                password: 'password',
+              },
+            }));
           });
 
           afterEach(function() {
             uiRoot.$.registerNewUserContainer.show.restore();
-          })
+          });
 
           it('should show the register-new-user container', function() {
             uiRoot.$.registerNewUserContainer.show.should.have.been.calledOnce;
@@ -172,7 +223,7 @@
               email: 'email',
               password: 'password',
             });
-          })
+          });
         });
 
         [{
@@ -180,31 +231,31 @@
           path: '/',
           page: 'donate',
           title: 'donate-page-title',
-          is: 'donate-container'
+          is: DonateContainer,
         }, {
           description: 'with donate route',
           path: '/donate',
           page: 'donate',
           title: 'donate-page-title',
-          is: 'donate-container'
+          is: DonateContainer,
         }, {
           description: 'with profile route',
           path: '/profile',
           page: 'profile',
           title: 'profile-page-title',
-          is: 'profile-container'
+          is: ProfileContainer,
         }, {
           description: 'with recurring route',
           path: '/recurring',
           page: 'recurring',
           title: 'recurring-page-title',
-          is: 'recurring-container'
+          is: RecurringContainer,
         }, {
           description: 'with an unknown route',
           path: '/unknown',
           page: 'not-found',
           title: 'not-found-page-title',
-          is: 'not-found-view'
+          is: NotFoundView,
         }].forEach(function(routeCase) {
           describe(routeCase.description, function() {
             beforeEach(function() {
@@ -217,11 +268,13 @@
             });
 
             it('the page should be the correct type', function() {
-              uiRoot.$.pages.selectedItem.is.should.eql(routeCase.is);
+              uiRoot.$.pages.selectedItem.should.be.an.instanceOf(routeCase.is);
             });
 
             it('should set the page title', function() {
-              uiRoot.$.pageTitle.textContent.should.equal(uiRoot.localize(routeCase.title));
+              uiRoot.$.pageTitle.textContent.should.equal(
+                uiRoot.localize(routeCase.title)
+              );
             });
           });
         });

@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./donate-view.html">
 
 <dom-module id="donate-container">
@@ -11,17 +11,21 @@
     </donate-view>
   </template>
   <script>
-    Polymer({
-      is: 'donate-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-        isSignedIn: {
-          type: Boolean,
-          statePath: app.auth.isSignedIn,
-        },
-      },
-      actions: {
-      },
-    });
+    class DonateContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'donate-container';
+      }
+
+      static get properties() {
+        return {
+          isSignedIn: {
+            type: Boolean,
+            statePath: app.auth.isSignedIn,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(DonateContainer.is, DonateContainer);
   </script>
 </dom-module>

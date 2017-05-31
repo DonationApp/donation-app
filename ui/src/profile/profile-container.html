@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./profile-view.html">
 
 <dom-module id="profile-container">
@@ -11,17 +11,21 @@
     </profile-view>
   </template>
   <script>
-    Polymer({
-      is: 'profile-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-        isSignedIn: {
-          type: Boolean,
-          statePath: app.auth.isSignedIn,
-        },
-      },
-      actions: {
-      },
-    });
+    class ProfileContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'profile-container';
+      }
+
+      static get properties() {
+        return {
+          isSignedIn: {
+            type: Boolean,
+            statePath: app.auth.isSignedIn,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(ProfileContainer.is, ProfileContainer);
   </script>
 </dom-module>

@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global ProfilePage */
+
       var profilePage;
 
       describe('profile-page', function() {
@@ -24,7 +26,7 @@
         });
 
         it('should instantiate', function() {
-          profilePage.is.should.eql('profile-page');
+          profilePage.should.be.an.instanceOf(ProfilePage);
         });
       });
     </script>

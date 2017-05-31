@@ -4,22 +4,27 @@ module.exports = {
   suites: ['ui/test/src/'],
   plugins: {
     // TODO: istanbul plugin doesn't work with polymer-cli 0.17.0
-    //
-    // istanbul: {
-      // dir: './coverage',
-      // reporters: ['text', 'lcov'],
-      // include: [
-        // 'src/**/*+(js|html)'
-      // ],
-      // thresholds: {
-        // global: {
-          // statements: 100,
-          // functions: 100,
-          // branches: 100,
-          // lines: 100
-        // }
-      // }
-    // },
+    istanbul: {
+      dir: './ui/coverage',
+      reporters: ['text', 'lcov'],
+      include: [
+        'ui/src/**/*.html'
+      ],
+      thresholds: {
+        global: {
+          statements: 100,
+          functions: 100,
+          branches: 100,
+          lines: 100
+        }
+      },
+      watermarks: {
+        lines: [100, 100],
+        statements: [100, 100],
+        functions: [100, 100],
+        branches: [100, 100]
+      }
+    },
     local: {
       browsers: ['chrome'],
     },

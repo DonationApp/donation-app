@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global SignOutContainer, SignOutView */
+
       var signOutContainer;
 
       describe('sign-out-container', function() {
@@ -24,14 +26,21 @@
           signOutContainer = fixture('default attributes');
         });
 
+        it('should instantiate', function() {
+          signOutContainer.should.be.an.instanceOf(SignOutContainer);
+        });
+
         it('should contain a sign-out view', function() {
-          signOutContainer.$.view.is.should.eql('sign-out-view');
+          signOutContainer.$.view.should.be.an.instanceOf(SignOutView);
         });
 
         describe('on sign-out event', function() {
           it('should dispatch a signOut action', function() {
             app.helpers.reset();
-            signOutContainer.fire('sign-out');
+            signOutContainer.$.view.dispatchEvent(new CustomEvent('sign-out', {
+              bubbles: true,
+              composed: true,
+            }));
             app.auth.signOut.should.have.been.calledOnce;
             app.store.dispatch.should.have.been.calledWith(
               app.auth.signOut.value

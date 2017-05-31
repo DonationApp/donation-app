@@ -1,18 +1,25 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <dom-module id="donate-view">
   <template>
     <div>DONATE</div>
   </template>
   <script>
-    Polymer({
-      is: 'donate-view',
-      properties: {
-        isSignedIn: {
-          type: Boolean,
-          value: false,
-        },
-      },
-    });
+    class DonateView extends Polymer.Element {
+      static get is() {
+        return 'donate-view';
+      }
+
+      static get properties() {
+        return {
+          isSignedIn: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(DonateView.is, DonateView);
   </script>
 </dom-module>

@@ -16,6 +16,8 @@
       </template>
     </test-fixture>
     <script>
+      /* global RecurringContainer, RecurringView */
+
       var recurringContainer;
 
       describe('recurring-container', function() {
@@ -24,8 +26,12 @@
           recurringContainer = fixture('default attributes');
         });
 
+        it('should instantiate', function() {
+          recurringContainer.should.be.an.instanceOf(RecurringContainer);
+        });
+
         it('should contain a recurring view', function() {
-          recurringContainer.$.view.is.should.eql('recurring-view');
+          recurringContainer.$.view.should.be.an.instanceOf(RecurringView);
         });
 
         describe('when signed in', function() {

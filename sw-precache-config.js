@@ -13,7 +13,8 @@ module.exports = {
   staticFileGlobs: [
     '/index.html',
     '/manifest.json',
-    '/bower_components/webcomponentsjs/webcomponents-lite.min.js',
+    '/locales.json',
+    '/bower_components/webcomponentsjs/*.js',
     '/ui/app/bundle.js',
   ],
   navigateFallback: '/index.html',

@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./register-new-user-view.html">
 
 <dom-module id="register-new-user-container">
@@ -16,60 +16,80 @@
     </register-new-user-view>
   </template>
   <script>
-    Polymer({
-      is: 'register-new-user-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-        message: {
-          type: String,
-          value: '',
-        },
-        hasError: {
-          type: Boolean,
-          statePath: app.auth.hasError,
-        },
-        errorText: {
-          type: String,
-          statePath: app.auth.getErrorText,
-        },
-        isSignedIn: {
-          type: Boolean,
-          statePath: app.auth.isSignedIn,
-        },
-        isEmailVerified: {
-          type: Boolean,
-          statePath: app.auth.isEmailVerified,
-        },
-        isSignedOut: {
-          type: Boolean,
-          statePath: app.auth.isSignedOut,
-        },
-        isPending: {
-          type: Boolean,
-          statePath: app.auth.isPending,
-        },
-      },
-      actions: {
-        createUserWithEmailAndPassword: app.auth.createUserWithEmailAndPassword,
-        resetError: app.auth.resetError,
-      },
-      listeners: {
-        'register-new-user': '_register',
-        'register-new-user-dismissed': '_registerDismissed',
-      },
-      _registerDismissed: function() {
+    class RegisterNewUserContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'register-new-user-container';
+      }
+
+      static get properties() {
+        return {
+          message: {
+            type: String,
+            value: '',
+          },
+          hasError: {
+            type: Boolean,
+            statePath: app.auth.hasError,
+          },
+          errorText: {
+            type: String,
+            statePath: app.auth.getErrorText,
+          },
+          isSignedIn: {
+            type: Boolean,
+            statePath: app.auth.isSignedIn,
+          },
+          isEmailVerified: {
+            type: Boolean,
+            statePath: app.auth.isEmailVerified,
+          },
+          isSignedOut: {
+            type: Boolean,
+            statePath: app.auth.isSignedOut,
+          },
+          isPending: {
+            type: Boolean,
+            statePath: app.auth.isPending,
+          },
+        };
+      }
+
+      static get actions() {
+        return {
+          createUserWithEmailAndPassword: app.auth.createUserWithEmailAndPassword,
+          resetError: app.auth.resetError,
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('register-new-user', (e) => this._register(e));
+        this.addEventListener(
+          'register-new-user-dismissed',
+          (e) => this._registerDismissed(e)
+        );
+      }
+
+      _registerDismissed() {
         this.dispatch('resetError');
-      },
-      _register: function(event) {
+      }
+
+      _register(event) {
         return this.dispatch(
           'createUserWithEmailAndPassword',
           event.detail.email,
           event.detail.password
         );
-      },
-      show: function(params) {
+      }
+
+      show(params) {
         this.$.view.show(params);
-      },
-    });
+      }
+    }
+
+    window.customElements.define(
+      RegisterNewUserContainer.is,
+      RegisterNewUserContainer
+    );
   </script>
 </dom-module>

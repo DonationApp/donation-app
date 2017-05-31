@@ -7,17 +7,17 @@
     <script src="../../../bower_components/web-component-tester/browser.js"></script>
 
     <link rel="import" href="../helpers/common.html">
-    <link rel="import" href="../../src/redux-behavior.html">
+    <link rel="import" href="../../src/redux-mixin.html">
   </head>
   <body>
     <script>
-      describe('ReduxBehavior', function() {
+      describe('ReduxMixin', function() {
         it('should start the app', function() {
           app.start.should.have.been.calledWith(app);
         });
 
         it('should be attached to the global scope', function() {
-          ReduxBehavior.should.be.ok;
+          ReduxMixin.should.be.ok;
         });
       });
     </script>

@@ -10,22 +10,28 @@
     <link rel="import" href="../../../src/donate/donate-container.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <donate-container></donate-container>
       </template>
     </test-fixture>
     <script>
+      /* global DonateContainer, DonateView */
+
       var donateContainer;
 
       describe('donate-container', function() {
         beforeEach(function() {
           app.helpers.reset();
-          donateContainer = fixture('default attributes');
+          donateContainer = fixture('default');
+        });
+
+        it('should be a donate container', function() {
+          donateContainer.should.be.an.instanceOf(DonateContainer);
         });
 
         it('should contain a donate view', function() {
-          donateContainer.$.view.is.should.eql('donate-view');
+          donateContainer.$.view.should.be.an.instanceOf(DonateView);
         });
 
         describe('when signed in', function() {

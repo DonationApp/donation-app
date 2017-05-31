@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../not-authorized/not-authorized-view.html">
 <link rel="import" href="./profile-page.html">
@@ -15,17 +15,25 @@
     </iron-pages>
   </template>
   <script>
-    Polymer({
-      is: 'profile-view',
-      properties: {
-        isSignedIn: {
-          type: Boolean,
-          value: false,
-        },
-      },
-      _getPage: function(isSignedIn) {
+    class ProfileView extends Polymer.Element {
+      static get is() {
+        return 'profile-view';
+      }
+
+      static get properties() {
+        return {
+          isSignedIn: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      _getPage(isSignedIn) {
         return isSignedIn ? 'profile' : 'not-authorized';
-      },
-    });
+      }
+    }
+
+    window.customElements.define(ProfileView.is, ProfileView);
   </script>
 </dom-module>

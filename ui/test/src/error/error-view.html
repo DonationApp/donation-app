@@ -16,20 +16,25 @@
       </template>
     </test-fixture>
     <script>
+      /* global ErrorView */
+
       var errorView;
 
       describe('error-view', function() {
         beforeEach(function(done) {
           errorView = fixture('default attributes');
           const stringsLoaded = function() {
-            errorView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            errorView.removeEventListener(
+              'app-localize-resources-loaded',
+              stringsLoaded
+            );
             done();
           };
           errorView.addEventListener('app-localize-resources-loaded', stringsLoaded);
         });
 
         it('should instantiate', function() {
-          errorView.is.should.eql('error-view');
+          errorView.should.be.an.instanceOf(ErrorView);
         });
 
         describe('when there is an error', function() {
@@ -48,7 +53,9 @@
 
           describe('when the dialog is closed', function() {
             it('should fire an error-dismissed event', function(done) {
-              errorView.addEventListener('error-dismissed', function() {
+              errorView.addEventListener('error-dismissed', function(event) {
+                event.bubbles.should.be.true;
+                event.composed.should.be.true;
                 done();
               });
               errorView.$.dialog.close();

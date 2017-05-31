@@ -20,7 +20,7 @@
         while (path.length > 0) {
           var head = path.shift();
           methods[head] = methods[head] || {};
-          methods = methods[head]
+          methods = methods[head];
         }
         sinon.stub(methods, method, function() {
           return methods[method].value;

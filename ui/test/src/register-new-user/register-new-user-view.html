@@ -16,24 +16,34 @@
       </template>
     </test-fixture>
     <script>
+      /* global RegisterNewUserView */
+
       var registerNewUserView;
 
       describe('register-new-user-view', function() {
         beforeEach(function(done) {
           registerNewUserView = fixture('default attributes');
           const stringsLoaded = function() {
-            registerNewUserView.removeEventListener('app-localize-resources-loaded', stringsLoaded);
+            registerNewUserView.removeEventListener(
+              'app-localize-resources-loaded',
+              stringsLoaded
+            );
             done();
           };
-          registerNewUserView.addEventListener('app-localize-resources-loaded', stringsLoaded);
+          registerNewUserView.addEventListener(
+            'app-localize-resources-loaded',
+            stringsLoaded
+          );
         });
 
         it('should instantiate', function() {
-          registerNewUserView.is.should.eql('register-new-user-view');
+          registerNewUserView.should.be.an.instanceOf(RegisterNewUserView);
         });
 
         it('should have a cancel button', function() {
-          registerNewUserView.$.cancel.textContent.should.eql(registerNewUserView.localize('cancel-button'));
+          registerNewUserView.$.cancel.textContent.should.eql(
+            registerNewUserView.localize('cancel-button')
+          );
         });
 
         describe('when there is an error', function() {
@@ -66,7 +76,9 @@
           });
 
           it('should change the cancel button to dismiss', function() {
-            registerNewUserView.$.cancel.textContent.should.eql(registerNewUserView.localize('dismiss-button'));
+            registerNewUserView.$.cancel.textContent.should.eql(
+              registerNewUserView.localize('dismiss-button')
+            );
           });
 
           it('should disable the sign in button', function() {
@@ -98,13 +110,18 @@
             registerNewUserView.$.email.value = 'email';
             registerNewUserView.$.password.value = 'password';
             registerNewUserView.$.confirmPassword.value = 'password';
-            registerNewUserView.addEventListener('register-new-user', function(event) {
-              event.detail.should.eql({
-                email: 'email',
-                password: 'password',
-              });
-              done();
-            });
+            registerNewUserView.addEventListener(
+              'register-new-user',
+              function(event) {
+                event.bubbles.should.be.true;
+                event.composed.should.be.true;
+                event.detail.should.eql({
+                  email: 'email',
+                  password: 'password',
+                });
+                done();
+              }
+            );
             registerNewUserView.$.register.click();
           });
         });
@@ -132,6 +149,7 @@
               registerNewUserView.isSignedIn = true;
             });
 
+            // eslint-disable-next-line max-len
             it('should close the dialog and show the verification notice', function() {
               registerNewUserView.$.dialog.opened.should.be.false;
               registerNewUserView.$.verificationDialog.opened.should.be.true;
@@ -162,6 +180,8 @@
             });
 
             it('should fire a show-sign-in event', function() {
+              event.bubbles.should.be.true;
+              event.composed.should.be.true;
               event.detail.email.should.eql('email');
               event.detail.password.should.eql('password');
             });
@@ -172,14 +192,20 @@
           });
 
           describe('and when the dialog is closed', function() {
+            // eslint-disable-next-line max-len
             it('should fire a register-new-user-dismissed event and clear the email and password fields', function(done) {
               registerNewUserView.$.email.value = 'email';
               registerNewUserView.$.password.value = 'password';
-              registerNewUserView.addEventListener('register-new-user-dismissed', function() {
-                registerNewUserView.$.email.value.should.eql('');
-                registerNewUserView.$.password.value.should.eql('');
-                done();
-              });
+              registerNewUserView.addEventListener(
+                'register-new-user-dismissed',
+                function(event) {
+                  event.bubbles.should.be.true;
+                  event.composed.should.be.true;
+                  registerNewUserView.$.email.value.should.eql('');
+                  registerNewUserView.$.password.value.should.eql('');
+                  done();
+                }
+              );
               registerNewUserView.$.dialog.close();
             });
           });

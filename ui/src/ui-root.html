@@ -1,6 +1,7 @@
 <link rel="import" href="./intl.html">
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="./redux-behavior.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="./redux-mixin.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
@@ -34,6 +35,10 @@
         --app-secondary-color: black;
 
         display: block;
+      }
+
+      app-drawer-layout:not([narrow]) [drawer-toggle] {
+        display: none;
       }
 
       app-header {
@@ -81,7 +86,7 @@
     <sign-in-container id="signInContainer"></sign-in-container>
     <register-new-user-container id="registerNewUserContainer"></register-new-user-container>
     <app-drawer-layout id="drawerLayout" fullbleed>
-      <app-drawer id="drawer">
+      <app-drawer slot="drawer" id="drawer">
         <app-toolbar id="drawerToolbar">
           <div id="mainTitle" main-title>[[localize('main-title')]]</div>
           <iron-icon id="pagePointer" icon="chevron-right"></iron-icon>
@@ -99,7 +104,7 @@
         </iron-selector>
       </app-drawer>
       <app-header-layout id="headerLayout" has-scrolling-region>
-        <app-header id="header" fixed effects="waterfall">
+        <app-header slot="header" id="header" fixed effects="waterfall">
           <app-toolbar id="toolbar">
             <paper-icon-button id="toggleDrawer" icon="menu" drawer-toggle></paper-icon-button>
             <div id="pageTitle" main-title>[[_getPageTitle(localize, page)]]</div>
@@ -130,79 +135,99 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'ui-root',
-      behaviors: [
-        Polymer.AppLocalizeBehavior,
-        ReduxBehavior,
-      ],
-      properties: {
-        language: {
-          type: String,
-          value: 'en',
-        },
-        isSignedOut: {
-          type: Boolean,
-          statePath: app.auth.isSignedOut,
-        },
-        isEmailVerified: {
-          type: Boolean,
-          statePath: app.auth.isEmailVerified,
-        },
-        isSignedIn: {
-          type: Boolean,
-          statePath: app.auth.isSignedIn,
-        },
-        isPending: {
-          type: Boolean,
-          statePath: app.auth.isPending,
-        },
-        page: {
-          type: String,
-          reflectToAttribute: true,
-        },
-      },
-      observers: [
-        '_routePageChange(routeData.page)',
-      ],
-      listeners: {
-        'show-sign-in': '_showSignIn',
-        'show-sign-out': '_showSignOut',
-        'show-register-new-user': '_showRegisterNewUser',
-      },
-      attached: function() {
+    class UiRoot extends Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior],
+      ReduxMixin(Polymer.Element)
+    ) {
+      static get is() {
+        return 'ui-root';
+      }
+
+      static get properties() {
+        return {
+          language: {
+            type: String,
+            value: 'en',
+          },
+          isSignedOut: {
+            type: Boolean,
+            statePath: app.auth.isSignedOut,
+          },
+          isEmailVerified: {
+            type: Boolean,
+            statePath: app.auth.isEmailVerified,
+          },
+          isSignedIn: {
+            type: Boolean,
+            statePath: app.auth.isSignedIn,
+          },
+          isPending: {
+            type: Boolean,
+            statePath: app.auth.isPending,
+          },
+          page: {
+            type: String,
+            reflectToAttribute: true,
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChange(routeData.page)',
+        ];
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('show-sign-in', (e) => this._showSignIn(e));
+        this.addEventListener('show-sign-out', (e) => this._showSignOut(e));
+        this.addEventListener(
+          'show-register-new-user',
+          (e) => this._showRegisterNewUser(e)
+        );
         this.loadResources(this.resolveUrl('../../locales.json'));
-      },
-      _getIconClass: function(isEmailVerified) {
+      }
+
+      _getIconClass(isEmailVerified) {
         return isEmailVerified ? '' : 'red';
-      },
-      _getPageTitle: function(localize, page) {
+      }
+
+      _getPageTitle(localize, page) {
         return localize(page + '-page-title') || localize('not-found-page-title');
-      },
-      _routePageChange: function(page) {
+      }
+
+      _routePageChange(page) {
         this.page = page || 'donate';
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
         }
-      },
-      _signIn: function() {
+      }
+
+      _signIn() {
         this.fire('show-sign-in', {
           email: '',
           password: '',
         });
-      },
-      _signOut: function() {
+      }
+
+      _signOut() {
         this.fire('show-sign-out');
-      },
-      _showSignIn: function(event) {
+      }
+
+      _showSignIn(event) {
         this.$.signInContainer.show(event.detail);
-      },
-      _showSignOut: function() {
+      }
+
+      _showSignOut() {
         this.$.signOutContainer.show();
-      },
-      _showRegisterNewUser: function(event) {
+      }
+
+      _showRegisterNewUser(event) {
         this.$.registerNewUserContainer.show(event.detail);
-      },
-    });
+      }
+    }
+
+    window.customElements.define(UiRoot.is, UiRoot);
   </script>
 </dom-module>

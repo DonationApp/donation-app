@@ -1,5 +1,5 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../redux-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="./sign-in-view.html">
 
 <dom-module id="sign-in-container">
@@ -15,63 +15,80 @@
     </sign-in-view>
   </template>
   <script>
-    Polymer({
-      is: 'sign-in-container',
-      behaviors: [ReduxBehavior],
-      properties: {
-        message: {
-          type: String,
-          value: '',
-        },
-        hasError: {
-          type: Boolean,
-          statePath: app.auth.hasError,
-        },
-        errorText: {
-          type: String,
-          statePath: app.auth.getErrorText,
-        },
-        isSignedIn: {
-          type: Boolean,
-          statePath: app.auth.isSignedIn,
-        },
-        isSignedOut: {
-          type: Boolean,
-          statePath: app.auth.isSignedOut,
-        },
-        isPending: {
-          type: Boolean,
-          statePath: app.auth.isPending,
-        },
-      },
-      actions: {
-        signInWithGoogleRedirect: app.auth.signInWithGoogleRedirect,
-        signInWithEmailAndPassword: app.auth.signInWithEmailAndPassword,
-        resetError: app.auth.resetError,
-      },
-      listeners: {
-        'sign-in': '_signIn',
-        'sign-in-with-google': '_signInWithGoogle',
-        'sign-in-dismissed': '_signInDismissed',
-      },
-      _signInDismissed: function() {
+    class SignInContainer extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'sign-in-container';
+      }
+
+      static get properties() {
+        return {
+          message: {
+            type: String,
+            value: '',
+          },
+          hasError: {
+            type: Boolean,
+            statePath: app.auth.hasError,
+          },
+          errorText: {
+            type: String,
+            statePath: app.auth.getErrorText,
+          },
+          isSignedIn: {
+            type: Boolean,
+            statePath: app.auth.isSignedIn,
+          },
+          isSignedOut: {
+            type: Boolean,
+            statePath: app.auth.isSignedOut,
+          },
+          isPending: {
+            type: Boolean,
+            statePath: app.auth.isPending,
+          },
+        };
+      }
+
+      static get actions() {
+        return {
+          signInWithGoogleRedirect: app.auth.signInWithGoogleRedirect,
+          signInWithEmailAndPassword: app.auth.signInWithEmailAndPassword,
+          resetError: app.auth.resetError,
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('sign-in', (e) => this._signIn(e));
+        this.addEventListener(
+          'sign-in-with-google', (e) => this._signInWithGoogle(e)
+        );
+        this.addEventListener('sign-in-dismissed', (e) => this._signInDismissed(e));
+      }
+
+      _signInDismissed() {
         this.dispatch('resetError');
-      },
-      _signInWithGoogle: function() {
+      }
+
+      _signInWithGoogle() {
         return this.dispatch(
           'signInWithGoogleRedirect'
         );
-      },
-      _signIn: function(event) {
+      }
+
+      _signIn(event) {
         return this.dispatch(
           'signInWithEmailAndPassword',
           event.detail.email,
           event.detail.password
         );
-      },
-      show: function(params) {
+      }
+
+      show(params) {
         this.$.view.show(params);
-      },
-    });
+      }
+    }
+
+    window.customElements.define(SignInContainer.is, SignInContainer);
   </script>
 </dom-module>
