@@ -39,7 +39,7 @@
     "test": "run-s init app:lint app:test app:coverage ui:lint ui:test",
     "build": "run-s test ui:build",
     "deploy": "run-s firebase:rules firebase:id firebase:deploy",
-    "coveralls": "cat ./app/coverage/lcov.info | coveralls",
+    "coveralls": "cat ./app/coverage/lcov.info ./ui/coverage/lcov.info | coveralls",
     "wct:start": "wct --persistent --skip-plugin sauce ui/test/src"
   },
   "repository": {
