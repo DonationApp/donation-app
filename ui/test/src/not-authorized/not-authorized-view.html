@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <not-authorized-view message="profile-not-authorized-message"></not-authorized-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('not-authorized-view', function() {
         beforeEach(function(done) {
-          notAuthorizedView = fixture('default attributes');
+          notAuthorizedView = fixture('default');
           const stringsLoaded = function() {
             notAuthorizedView.removeEventListener(
               'app-localize-resources-loaded',

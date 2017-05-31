@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <profile-view></profile-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('profile-view', function() {
         beforeEach(function() {
-          profileView = fixture('default attributes');
+          profileView = fixture('default');
         });
 
         it('should instantiate', function() {

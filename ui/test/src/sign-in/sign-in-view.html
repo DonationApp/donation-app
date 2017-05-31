@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <sign-in-view></sign-in-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('sign-in-view', function() {
         beforeEach(function(done) {
-          signInView = fixture('default attributes');
+          signInView = fixture('default');
           const stringsLoaded = function() {
             signInView.removeEventListener(
               'app-localize-resources-loaded',

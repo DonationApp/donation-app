@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <error-view></error-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('error-view', function() {
         beforeEach(function(done) {
-          errorView = fixture('default attributes');
+          errorView = fixture('default');
           const stringsLoaded = function() {
             errorView.removeEventListener(
               'app-localize-resources-loaded',

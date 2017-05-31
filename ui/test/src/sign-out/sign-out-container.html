@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <sign-out-container></sign-out-container>
       </template>
@@ -24,7 +24,7 @@
       describe('sign-out-container', function() {
         beforeEach(function() {
           app.helpers.reset();
-          signOutContainer = fixture('default attributes');
+          signOutContainer = fixture('default');
         });
 
         it('should instantiate', function() {

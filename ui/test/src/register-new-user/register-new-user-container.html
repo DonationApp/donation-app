@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <register-new-user-container></register-new-user-container>
       </template>
@@ -24,7 +24,7 @@
       describe('register-new-user-container', function() {
         beforeEach(function() {
           app.helpers.reset();
-          registerNewUserContainer = fixture('default attributes');
+          registerNewUserContainer = fixture('default');
         });
 
         it('should instantiate', function() {

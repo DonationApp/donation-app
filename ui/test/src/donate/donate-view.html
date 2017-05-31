@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <donate-view></donate-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('donate-view', function() {
         beforeEach(function() {
-          donateView = fixture('default attributes');
+          donateView = fixture('default');
         });
 
         it('should instantiate', function() {

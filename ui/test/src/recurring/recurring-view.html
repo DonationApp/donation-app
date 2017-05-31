@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <recurring-view></recurring-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('recurring-view', function() {
         beforeEach(function() {
-          recurringView = fixture('default attributes');
+          recurringView = fixture('default');
         });
 
         it('should instantiate', function() {

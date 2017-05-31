@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <sign-in-container message="message"></sign-in-container>
       </template>
@@ -24,7 +24,7 @@
       describe('sign-in-container', function() {
         beforeEach(function() {
           app.helpers.reset();
-          signInContainer = fixture('default attributes');
+          signInContainer = fixture('default');
         });
 
         it('should instantiate', function() {

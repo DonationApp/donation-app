@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <register-new-user-view></register-new-user-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('register-new-user-view', function() {
         beforeEach(function(done) {
-          registerNewUserView = fixture('default attributes');
+          registerNewUserView = fixture('default');
           const stringsLoaded = function() {
             registerNewUserView.removeEventListener(
               'app-localize-resources-loaded',

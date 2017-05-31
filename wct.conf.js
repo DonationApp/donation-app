@@ -26,7 +26,7 @@ module.exports = {
       }
     },
     local: {
-      browsers: ['chrome'],
+      browsers: ['firefox', 'chrome'],
     },
     sauce: {
       browsers: [{

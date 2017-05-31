@@ -11,7 +11,7 @@
     <link rel="import" href="../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <ui-root></ui-root>
       </template>
@@ -54,7 +54,7 @@
       describe('ui-root', function() {
         beforeEach(function(done) {
           app.helpers.reset();
-          uiRoot = fixture('default attributes');
+          uiRoot = fixture('default');
           const stringsLoaded = function() {
             uiRoot.removeEventListener(
               'app-localize-resources-loaded',
@@ -227,39 +227,49 @@
           });
         });
 
+        var pageClasses;
         [{
           description: 'with no route',
           path: '/',
           page: 'donate',
           title: 'donate-page-title',
-          is: DonateContainer,
+          is: 'DonateContainer',
         }, {
           description: 'with donate route',
           path: '/donate',
           page: 'donate',
           title: 'donate-page-title',
-          is: DonateContainer,
+          is: 'DonateContainer',
         }, {
           description: 'with profile route',
           path: '/profile',
           page: 'profile',
           title: 'profile-page-title',
-          is: ProfileContainer,
+          is: 'ProfileContainer',
         }, {
           description: 'with recurring route',
           path: '/recurring',
           page: 'recurring',
           title: 'recurring-page-title',
-          is: RecurringContainer,
+          is: 'RecurringContainer',
         }, {
           description: 'with an unknown route',
           path: '/unknown',
           page: 'not-found',
           title: 'not-found-page-title',
-          is: NotFoundView,
+          is: 'NotFoundView',
         }].forEach(function(routeCase) {
           describe(routeCase.description, function() {
             beforeEach(function() {
+              // we do this because in some browsers
+              // these classes do not exist until we start
+              // running tests
+              pageClasses = {
+                DonateContainer: DonateContainer,
+                ProfileContainer: ProfileContainer,
+                RecurringContainer: RecurringContainer,
+                NotFoundView: NotFoundView,
+              };
               window.history.replaceState({}, null, routeCase.path);
               window.dispatchEvent(new CustomEvent('location-changed'));
             });
@@ -269,7 +279,9 @@
             });
 
             it('the page should be the correct type', function() {
-              uiRoot.$.pages.selectedItem.should.be.an.instanceOf(routeCase.is);
+              uiRoot.$.pages.selectedItem.should.be.an.instanceOf(
+                pageClasses[routeCase.is]
+              );
             });
 
             it('should set the page title', function() {

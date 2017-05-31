@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <sign-out-view message="profile-sign-out-message"></sign-out-view>
       </template>
@@ -23,7 +23,7 @@
 
       describe('sign-out-view', function() {
         beforeEach(function(done) {
-          signOutView = fixture('default attributes');
+          signOutView = fixture('default');
           const stringsLoaded = function() {
             signOutView.removeEventListener(
               'app-localize-resources-loaded',

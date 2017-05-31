@@ -11,7 +11,7 @@
     <link rel="import" href="../../helpers/common.html">
   </head>
   <body>
-    <test-fixture id="default attributes">
+    <test-fixture id="default">
       <template>
         <profile-page></profile-page>
       </template>
@@ -23,7 +23,7 @@
 
       describe('profile-page', function() {
         beforeEach(function() {
-          profilePage = fixture('default attributes');
+          profilePage = fixture('default');
         });
 
         it('should instantiate', function() {
