@@ -41,7 +41,15 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service-worker.js');
+          var serviceWorkerRegistration = navigator.serviceWorker.register('/service-worker.js');
+          serviceWorkerRegistration.then(function() {
+            console.log('Service worker is registered');
+            if (!navigator.serviceWorker.controller) {
+              console.log('Service worker needs to be activated');
+            } else {
+              console.log('Service worker is active');
+            }
+          });
         });
       }
     </script>
