@@ -10,9 +10,10 @@ const user = {
 };
 const email = 'fred@bloggs.com';
 const password = 'my password';
-const completeAction = 'set user action';
-const startAction = 'submit sign in action';
+const completeAction = 'complete action';
+const startAction = 'start action';
 const setErrorAction = 'set error action';
+const setAdminAction = 'set admin action';
 const error = new Error('FAIL');
 
 const auth = firebase.auth();
@@ -25,6 +26,7 @@ const app = {
   auth: {
     complete: sinon.spy(() => completeAction),
     start: sinon.spy(() => startAction),
+    setAdmin: sinon.spy(() => setAdminAction),
   },
   error: {
     setError: sinon.spy(() => setErrorAction),

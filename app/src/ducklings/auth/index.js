@@ -6,6 +6,7 @@ import asyncBehavior from '../../lib/ducklings/async-behavior';
 
 export default [asyncBehavior, ({
   selector,
+  action,
   app: {start, complete, isPending},
 }) => {
   const user = selector((state) => state.user);
@@ -27,6 +28,11 @@ export default [asyncBehavior, ({
     isSignedIn,
     user,
     (isSignedIn, user) => isSignedIn ? user.emailVerified : false,
+  );
+  const isAdmin = createSelector(
+    isSignedIn,
+    user,
+    (isSignedIn, user) => isSignedIn ? user.admin : false,
   );
 
   const signInWithGoogleRedirect = () => () => {
@@ -54,6 +60,7 @@ export default [asyncBehavior, ({
     authService.signOut();
     return complete(null);
   };
+  const setAdmin = action('SET_ADMIN');
 
   return {
     initialState: {
@@ -64,10 +71,12 @@ export default [asyncBehavior, ({
       isSignedOut,
       getDisplayName,
       isEmailVerified,
+      isAdmin,
       signInWithGoogleRedirect,
       signInWithEmailAndPassword,
       createUserWithEmailAndPassword,
       signOut,
+      setAdmin,
     },
     handlers: {
       [complete]: {
@@ -78,6 +87,12 @@ export default [asyncBehavior, ({
           },
         }),
       },
+      [setAdmin]: (state, {payload: admin}) => ({
+        user: {
+          ...state.user,
+          admin,
+        },
+      }),
     },
   };
 }];

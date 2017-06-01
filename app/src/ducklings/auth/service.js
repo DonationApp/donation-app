@@ -8,7 +8,9 @@ class AuthService {
     let currentUser;
     store.dispatch(app.auth.start()),
     this.auth = firebase.auth();
-    this.stop = this.auth.onAuthStateChanged((user) => {
+    this.database = firebase.database();
+    this.adminRef = undefined;
+    this.stopAuthStateChangedListener = this.auth.onAuthStateChanged((user) => {
       currentUser = user;
 
       // istanbul ignore next
@@ -17,6 +19,22 @@ class AuthService {
       }
 
       store.dispatch(app.auth.complete(user));
+
+      // if there is a user start listening for changes to
+      // admin status, otherwise stop listening for changes to
+      // admin status
+      // istanbul ignore next
+      if (this.adminRef) {
+        this.adminRef.off();
+        this.adminRef = undefined;
+      }
+      // istanbul ignore next
+      if (user !== null) {
+        this.adminRef = this.database.ref(`/admin/${user.uid}`);
+        this.adminRef.on('value', (snapshot) => {
+          store.dispatch(app.auth.setAdmin(snapshot.val()));
+        });
+      }
 
       // istanbul ignore next
       if (user && !user.emailVerified) {
@@ -48,6 +66,14 @@ class AuthService {
     return this.auth.getRedirectResult().catch(
       (error) => store.dispatch(app.error.setError(error)),
     );
+  }
+
+  stop() {
+    this.stopAuthStateChangedListener();
+    if (this.adminRef) {
+      this.adminRef.off();
+      this.adminRef = undefined;
+    }
   }
 
   signInWithGoogleRedirect() {

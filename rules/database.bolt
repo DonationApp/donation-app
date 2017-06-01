@@ -1,6 +1,11 @@
-path / {
-  read() { isSignedIn() }
-  write() { isSignedIn() }
+// Only admins can change admins
+// Users can only see if they are admins, not other users
+path /admin/{uid} is Boolean {
+  read() { isCurrentUserOrAdmin(uid) }
+  write() { isAdmin() }
 }
 
+isCurrentUserOrAdmin(uid) { isAdmin() || isCurrentUser(uid) }
+isAdmin() { isSignedIn() && prior(root.admin[auth.uid]) }
+isCurrentUser(uid) { isSignedIn() && auth.uid == uid }
 isSignedIn() { auth != null }
