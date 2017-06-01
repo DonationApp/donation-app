@@ -1,15 +1,16 @@
 import service from '../../src/service';
 import firebase from 'firebase';
 import config from '../../config';
-import authService from '../../src/ducks/auth/service';
+import authService from '../../src/ducklings/auth/service';
 
 const app = 'app';
+const store = 'store';
 
 describe('service', () => {
   beforeEach(() => {
     sinon.stub(firebase, 'initializeApp');
     sinon.stub(authService, 'start');
-    service.start(app);
+    service.start(app, store);
   });
 
   afterEach(() => {
@@ -26,6 +27,7 @@ describe('service', () => {
     authService.start.should.have.been.calledOnce;
     authService.start.should.have.been.calledWith(
       app,
+      store,
     );
   });
 });

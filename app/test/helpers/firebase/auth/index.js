@@ -29,19 +29,6 @@ function notifyAuthStateChanged(user) {
   _.invokeMap(authStateChangedListeners, _.call, null, user);
 }
 
-const signInWithPopup = sinon.spy(() => {
-  return new Promise((resolve, reject) => {
-    process.nextTick(() => {
-      const result = results.shift();
-      if (_.isUndefined(result.error)) {
-        resolve(result.success);
-      } else {
-        reject(result.error);
-      }
-    });
-  });
-});
-
 const signInWithRedirect = sinon.spy();
 
 const createUserWithEmailAndPassword = sinon.spy(() => {
@@ -90,7 +77,6 @@ class GoogleAuthProvider {
 };
 
 const authInstance = {
-  signInWithPopup,
   signInWithRedirect,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -115,7 +101,6 @@ export const helpers = {
     currentUser = user;
   },
   reset: () => {
-    signInWithPopup.reset();
     signInWithRedirect.reset();
     createUserWithEmailAndPassword.reset();
     signInWithEmailAndPassword.reset();

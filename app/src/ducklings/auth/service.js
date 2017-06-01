@@ -3,10 +3,10 @@ import firebase from 'firebase';
 const CHECK_VERIFIED_INTERVAL = 1000;
 
 class AuthService {
-  start(app) {
+  start(app, store) {
     let checkVerifiedTimeout;
     let currentUser;
-    app.store.dispatch(app.auth.submitSignIn()),
+    store.dispatch(app.auth.start()),
     this.auth = firebase.auth();
     this.stop = this.auth.onAuthStateChanged((user) => {
       currentUser = user;
@@ -16,7 +16,7 @@ class AuthService {
         clearTimeout(checkVerifiedTimeout);
       }
 
-      app.store.dispatch(app.auth.setUser(user));
+      store.dispatch(app.auth.complete(user));
 
       // istanbul ignore next
       if (user && !user.emailVerified) {
@@ -31,7 +31,7 @@ class AuthService {
               startCheckVerifiedTimeout();
             } else {
               if (currentUser === user) {
-                app.store.dispatch(app.auth.setUser(user));
+                store.dispatch(app.auth.complete(user));
               }
             }
           });
@@ -46,18 +46,13 @@ class AuthService {
       }
     });
     return this.auth.getRedirectResult().catch(
-      (error) => app.store.dispatch(app.error.setError(error)),
+      (error) => store.dispatch(app.error.setError(error)),
     );
   }
 
   signInWithGoogleRedirect() {
     const provider = new firebase.auth.GoogleAuthProvider();
     return this.auth.signInWithRedirect(provider);
-  }
-
-  signInWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    return this.auth.signInWithPopup(provider);
   }
 
   signInWithEmailAndPassword(email, password) {

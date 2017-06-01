@@ -5,36 +5,44 @@ export default class ServiceHelper {
   constructor(service, methods) {
     this.service = service;
     this.methods = methods;
-    this.methods.forEach(this._stub.bind(this));
+    _.forEach(this.methods, this._stub.bind(this));
     this.reset();
   }
 
-  _stub(method) {
+  _stub(isAsync, method) {
     sinon.stub(this.service, method).callsFake(() => {
-      return new Promise((resolve, reject) => {
-        process.nextTick(() => {
-          const result = this.results.shift();
-          if (_.isUndefined(result.error)) {
-            resolve(result.success);
-          } else {
-            reject(result.error);
-          }
+      if (isAsync) {
+        return new Promise((resolve, reject) => {
+          process.nextTick(() => {
+            const result = this.results.shift();
+            if (_.isUndefined(result.error)) {
+              resolve(result.success);
+            } else {
+              reject(result.error);
+            }
+          });
         });
-      });
+      } else {
+        const result = this.results.shift();
+        if (_.isUndefined(result.error)) {
+          return result.success;
+        }
+        throw result.error;
+      }
     });
   }
 
-  _reset(method) {
+  _reset(_, method) {
     this.service[method].resetHistory();
   }
 
-  _restore(method) {
+  _restore(_, method) {
     this.service[method].restore();
   }
 
   reset() {
     this.results = undefined;
-    this.methods.forEach(this._reset.bind(this));
+    _.forEach(this.methods, this._reset.bind(this));
   }
 
   setResults(results) {
@@ -42,6 +50,6 @@ export default class ServiceHelper {
   }
 
   restore() {
-    this.methods.forEach(this._restore.bind(this));
+    _.forEach(this.methods, this._restore.bind(this));
   }
 }

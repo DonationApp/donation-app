@@ -1,11 +1,11 @@
 import firebase from 'firebase';
 import config from '../config';
-import authService from './ducks/auth/service';
+import authService from './ducklings/auth/service';
 
 class Service {
-  start(app) {
+  start(app, store) {
     firebase.initializeApp(config);
-    authService.start(app);
+    authService.start(app, store);
   }
 }
 

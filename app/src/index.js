@@ -1,6 +1,8 @@
+import 'babel-polyfill';
+
+import resolve from 'redux-duckling';
 import {
   createStore,
-  combineReducers,
   applyMiddleware,
 } from 'redux';
 import thunk from 'redux-thunk';
@@ -12,20 +14,27 @@ import {
   composeWithDevTools,
 } from 'redux-devtools-extension';
 
+import service from './service';
+
+import error from './ducklings/error';
+import auth from './ducklings/auth';
+
+const {app, reducer} = resolve({
+  error,
+  auth,
+});
+export {app};
+
 const logger = createLogger();
 const composeEnhancers = composeWithDevTools({
   // devtool options
 });
 
-import errorReducer from './ducks/error';
-import * as error from './ducks/error';
-export {error as error};
-
-import authReducer from './ducks/auth';
-import * as auth from './ducks/auth';
-export {auth as auth};
-
-export default createStore(combineReducers({
-  error: errorReducer,
-  auth: authReducer,
-}), composeEnhancers(applyMiddleware(thunk, promise, logger)));
+module.exports = {
+  ...app,
+  start: service.start,
+  store: createStore(
+    reducer,
+    composeEnhancers(applyMiddleware(thunk, promise, logger))
+  ),
+};
