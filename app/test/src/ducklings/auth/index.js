@@ -77,6 +77,10 @@ describe('ducklings', () => {
         app.isEmailVerified(initialState).should.be.false;
       });
 
+      it('should not be an admin', () => {
+        app.isAdmin(initialState).should.be.false;
+      });
+
       it('should be signed out', () => {
         app.isSignedOut(initialState).should.be.true;
       });
@@ -282,6 +286,52 @@ describe('ducklings', () => {
 
                       it('should not be signed out', () => {
                         app.isSignedOut(changes[0].state).should.eql(false);
+                      });
+
+                      describe('then set admin to true', () => {
+                        beforeEach(() => {
+                          changes = [];
+                          store.dispatch(app.setAdmin(true));
+                        });
+
+                        it('should dispatch the setAdmin action', () => {
+                          changes[0].action.type.should.eql(
+                            app.setAdmin.toString()
+                          );
+                        });
+
+                        it('should be admin', () => {
+                          app.isAdmin(changes[0].state).should.be.true;
+                        });
+
+                        it('should not change the email verified state', () => {
+                          app.isEmailVerified(changes[0].state).should.eql(
+                            value.emailVerified
+                          );
+                        });
+
+                        it('should not change the display name', () => {
+                          app.getDisplayName(changes[0].state).should.eql(
+                            value.displayName,
+                          );
+                        });
+
+                        describe('then set admin to false', () => {
+                          beforeEach(() => {
+                            changes = [];
+                            store.dispatch(app.setAdmin(false));
+                          });
+
+                          it('should dispatch the setAdmin action', () => {
+                            changes[0].action.type.should.eql(
+                              app.setAdmin.toString()
+                            );
+                          });
+
+                          it('should not be admin', () => {
+                            app.isAdmin(changes[0].state).should.be.false;
+                          });
+                        });
                       });
 
                       describe('then sign out', () => {
