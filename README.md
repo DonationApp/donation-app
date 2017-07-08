@@ -5,30 +5,28 @@
 
 Manage donations to charities
 
-## Development setup
+## Development
 
-The following npm tasks will be useful during development
+### Prerequisites
 
-- `npm test` - test the Javascript and Polymer source (will build the Javascript bundle before running Polymer tests)
-- `npm run build` - run tests then build the Polymer app
-- `npm run deploy` - deploy to Firebase app instance (does not build first, this should be done separately)
-- `npm start` - starts servers and watches for changes to run tests
-- `npm run wct:start` - runs UI tests in persistent mode so that the browser stays open for debugging
+- NodeJS >= 6
+- Git >= v2.10 is required to properly support our `.gitattributes` configuration
+- Java >= 1.8 to run Selenium
+- Firefox browser for running UI tests locally
+- Google Chrome browser for running UI tests locally
+- You will need to create your own development Firebase instance at https://console.firebase.google.com/. This will be used by your local server during development so that you can preview functionality. Once created you will need to manually enable the following authentication methods (it is currently not possible to script/automate this).
+  - Email/Password
+  - Google
 
-You will need to create your own development Firebase instance at https://console.firebase.google.com/. This will be used by your local server during development so that you can preview functionality.
+### After cloning
 
-Once created you will need to manually enable the following authentication methods (it is currently not possible to script/automate this).
-
-- Email/Password
-- Google
-
-After cloning add your local config with the config directory
+Add your local config to the config directory
 
 ```
 cp -r config/production.json config/local.json
 ```
 
-Then update the `config/local.json` to your development Firebase settings.
+Then update the `config/local.json` with your development Firebase settings.
 
 Before starting the server run the following at least once to install bower dependencies, create config files, run tests, build etc.
 
@@ -52,3 +50,13 @@ During development it is recommended to run the following command to watch for c
 ```
 npm start
 ```
+
+The following npm tasks will be useful during development
+
+- `npm test` - test the Javascript and Polymer source (will build the Javascript bundle before running Polymer tests)
+- `npm run build` - run tests then build the Polymer app
+- `npm run deploy` - deploy to Firebase app instance (does not build first, this should be done separately)
+- `npm start` - starts servers and watches for changes to run tests
+- `npm run wct:start` - runs UI tests in persistent mode so that the browser stays open for debugging
+
+For additional notes on the architecture see [./docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md).
