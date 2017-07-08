@@ -23,7 +23,7 @@
     "ui:build": "polymer build",
     "firebase:rules": "cross-conf-env mustache config/$npm_package_config_profile.json rules/storage.rules.mustache > rules/storage.rules",
     "firebase:id": "cross-conf-env mustache config/$npm_package_config_profile.json .firebaserc.mustache > .firebaserc",
-    "firebase:deploy": "firebase deploy",
+    "firebase:deploy": "firebase deploy --non-interactive",
     "alarmist:config": "cross-conf-env chokidar config/$npm_package_config_profile.json app/config.js.mustache -c \"alarmist-npm config\"",
     "alarmist:app:lint": "chokidar \"app/+(src|test)/**/*\" -c \"alarmist-npm app:lint\"",
     "alarmist:app:test": "chokidar \"app/+(src|test)/**/*\" \"node_modules/!(.cache)/**/*\" -c \"alarmist-npm app:test\"",
