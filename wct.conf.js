@@ -30,10 +30,10 @@ module.exports = {
     },
     sauce: {
       browsers: [{
-        browserName: 'microsoftedge',
-        platform: 'Windows 10',
-        version: '',
-      }, {
+        // browserName: 'microsoftedge',
+        // platform: 'Windows 10',
+        // version: '',
+      // }, {
         browserName: 'internet explorer',
         platform: 'Windows 8.1',
         version: '11',
